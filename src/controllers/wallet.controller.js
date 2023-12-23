@@ -2,10 +2,27 @@ const WalletSchema = require("../models/wallet.model");
 const ConfigTransitiontSchema = require("../models/configTransition.model");
 const HistoryWalletSchema = require("../models/historyWallet.model");
 const UserSchema = require("../models/user.model");
-const CommissionSchema = require("../models/commission.model");
 const ProductSchema = require("../models/product.model");
 const PaymentSchema = require("../models/payment.model");
 const OrderSchema = require("../models/order.model");
+
+
+// const VietQR  = require ('vietqr')
+// const vietQR = new VietQR({
+//   clientID: "832c296e-be15-4abc-842a-a15a41e98389",
+//   apiKey: "52f8bc71-5486-4a2b-b044-dcaf4cf51ea3",
+// });
+
+// const getBankName = async (req, res) => {
+//   try {
+//     // Assuming getBanks is an asynchronous method, use await
+//     const bankName = await vietQR.getBanks();
+//     return res.json(bankName);
+//   } catch (error) {
+//     console.error("Error getting bank names:", error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
 
 const takeOder = async (req, res, next) => {
   const { productId } = req.query;
@@ -345,9 +362,9 @@ const getAll = async (req, res) => {
       isAdmin: false,
       isStaff: false,
     });
-   
-    const oder = await OrderSchema.countDocuments({}); 
-    console.log(oder)
+
+    const oder = await OrderSchema.countDocuments({});
+    console.log(oder);
     if (allMoney && allMoneyTotalRecharge) {
       data.totalWithdrawal = totalMoney - totalMoneyRecharge;
       data.totalRecharge = totalMoneyRecharge;
@@ -355,12 +372,13 @@ const getAll = async (req, res) => {
       data.coutOrder = oder;
     }
 
-    return res.status(200).json({data});
+    return res.status(200).json({ data });
   } catch (error) {
     return res.status(404).json({ error });
   }
 };
 module.exports = {
+  // getBankName,
   frizes,
   addMoneyToWallet,
   getHistoryWallet,

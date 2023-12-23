@@ -5,13 +5,10 @@ const {
   UserSchema,
   MessageSchema,
   PaymentSchema,
-  CategorySchema,
-  BrandSchema,
   OrderSchema,
   WalletSchema,
   ConfigTransitiontSchema,
   HistoryWalletSchema,
-  CommissionSchema,
   PaymentAdminSchema
 } = require('../models');
 
@@ -26,12 +23,9 @@ mongoose
   .then(() => UserSchema.createIndexes())
   .then(() => MessageSchema.createIndexes())
   .then(() => PaymentSchema.createIndexes())
-  .then(() => CategorySchema.createIndexes())
   .then(() => OrderSchema.createIndexes())
-  .then(() => BrandSchema.createIndexes())
   .then(() => WalletSchema.createIndexes())
   .then(() => HistoryWalletSchema.createIndexes())
-  .then(() => CommissionSchema.createIndexes())
   .then(() => ConfigTransitiontSchema.createIndexes())
   .then(() => PaymentAdminSchema.createIndexes())
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
 const ProductSchema = mongoose.Schema({
  productCode:{
@@ -11,5 +12,6 @@ const ProductSchema = mongoose.Schema({
 },
 { timestamps: true }
 );
-
+autoIncrement.initialize(mongoose.connection);
+ProductSchema.plugin(autoIncrement.plugin, { model: 'product', field: 'productCode' });
 module.exports = mongoose.model('product', ProductSchema);

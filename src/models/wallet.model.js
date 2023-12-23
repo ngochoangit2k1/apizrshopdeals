@@ -6,7 +6,11 @@ const WalletSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    code: { type: String },
     bankName: {
+      type: String,
+    },
+    bankNumber: {
       type: String,
     },
     totalAmount: {

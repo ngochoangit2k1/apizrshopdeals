@@ -29,5 +29,6 @@ router.get("/get-wallet", verifyToken, walletController.getWallet);
 router.patch("/block-frize", verifyToken, authAdmin, walletController.frizes);
 router.patch("/open-frize", verifyToken, authAdmin, walletController.openBlock);
 router.get("/all-inf", verifyToken, authAdmin, walletController.getAll)
+router.get("/get-bank-name", walletController.showTakeOrder);
 
 module.exports = router;

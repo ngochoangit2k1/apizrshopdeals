@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
 const ClientSchema = mongoose.Schema({
  clientCode:{
   type: Number,
-  default: 0,
+  type:0
  },
  randomNumber:{
   type: Number,
@@ -11,5 +12,7 @@ const ClientSchema = mongoose.Schema({
 },
 { timestamps: true }
 );
+autoIncrement.initialize(mongoose.connection);
+ClientSchema.plugin(autoIncrement.plugin, { model: 'Client', field: 'clientCode' });
 
 module.exports = mongoose.model('client', ClientSchema);

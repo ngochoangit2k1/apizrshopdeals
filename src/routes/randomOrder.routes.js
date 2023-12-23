@@ -1,10 +1,9 @@
 const express = require("express");
-const randomController = require("../controllers/randomOrder.controller");
 const router = express.Router();
-
+const codeRamdomController = require("../controllers/codeRandom.controller")
 
 // router.get("/get-order", orderController.getAllOrder);
-// router.get("/get-order-by-category", orderController.getOrdersByCategory);
+router.get("/create-code", codeRamdomController.createClientCode);
 // router.post("/create", randomController.createRandomOrder);
 // router.patch("/update/:orderId", upload.Image('image'), orderController.updateOrder);
 // router.get("/search", orderController.searchOrder);

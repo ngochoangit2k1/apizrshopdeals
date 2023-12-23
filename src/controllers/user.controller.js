@@ -5,7 +5,6 @@ const auth = require("../middlewares/auth");
 const config = require("../config/config");
 const { validateEmail } = require("../validates/auth.validate");
 const PaymentSchema = require("../models/payment.model");
-const CommissionSchema = require("../models/commission.model");
 
 const generateRandomString = (length) => {
   const characters = "0123456789";
@@ -68,9 +67,19 @@ const register = async (req, res) => {
       
     });
     await newUser.save();
+
+    const user = await UserSchema.findOne({ username });
+    const token = auth.generateToken(user._id, user.username);
+    const expires_in = auth.expiresToken(token);
+
+    user.password = undefined;
+    user.__v = undefined;
     res.status(200).json({
       oke: true,
       message: "Bạn đã tạo tài khoản thành công! 🎉'",
+      user,
+      token,
+      expires_in,
     });
   } catch (error) {
     console.log(error);

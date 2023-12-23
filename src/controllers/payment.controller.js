@@ -3,14 +3,14 @@ const UserSchema = require("../models/user.model");
 
 const postPayment = async (req, res, next) => {
   try {
-    const { bankName, accountNumber, userId, name } = req.body;
+    const { bankName, accountNumber, userId, nameUserBank } = req.body;
     const user = await UserSchema.findOne({ _id: userId });
     if (user) {
       const createPayment = await PaymentSchema.create({
         bankName,
         accountNumber,
         userId,
-        nameUserBank: name
+        nameUserBank
       });
       return res.status(200).json(createPayment);
     } else {
@@ -26,7 +26,7 @@ const getBankByUser = async (req, res) => {
     const { userId } = req.query;
     const findInfoBankUser = await PaymentSchema.findOne({
       userId: userId,
-    }).populate("userId", "name");
+    }).populate("userId");
     return res.status(200).json(findInfoBankUser);
   } catch (error) {
     return res.status(400).json(error);

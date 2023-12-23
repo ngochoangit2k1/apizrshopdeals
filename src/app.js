@@ -49,14 +49,11 @@ app.use("/api/v1/auth", require("./routes/auth.routes"));
 app.use("/api/v1/user", require("./routes/user.routes"));
 app.use("/api/v1/contact", require("./routes/contact.routes"));
 app.use("/api/v1/message", require("./routes/message.routes"));
-app.use("/api/v1/category", require("./routes/category.routes"));
-app.use("/api/v1/brand", require("./routes/brand.routes"));
 app.use("/api/v1/order", require("./routes/order.routes"));
 app.use("/api/v1/payment", require("./routes/payment.routes"));
 app.use("/api/v1/wallet", require("./routes/wallet.routes"));
-app.use("/api/v1/random", require("./routes/randomOrder.routes"));
 app.use("/api/v1/payment-admin", require("./routes/paymentAdmin.routes"));
-
+app.use("/api/v1/code-random", require("./routes/randomOrder.routes"))
 app.use(
   "/api/v1/config-transition",
   require("./routes/configTransition.routes")
