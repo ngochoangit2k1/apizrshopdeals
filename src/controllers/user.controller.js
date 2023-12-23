@@ -368,7 +368,7 @@ const searchStaff = async (req, res) => {
 const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
-    const checkUser = await UserSchema.findOne(userId)
+    const checkUser = await UserSchema.findOne({_id: userId})
     if(checkUser.isAdmin === true) {
       return res.status(400).json({
         ok: false,
