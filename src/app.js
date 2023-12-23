@@ -47,7 +47,6 @@ app.use(
 );
 app.use("/api/v1/auth", require("./routes/auth.routes"));
 app.use("/api/v1/user", require("./routes/user.routes"));
-
 app.use("/api/v1/contact", require("./routes/contact.routes"));
 app.use("/api/v1/message", require("./routes/message.routes"));
 app.use("/api/v1/category", require("./routes/category.routes"));

@@ -4,7 +4,6 @@ const {
   ContactSchema,
   UserSchema,
   MessageSchema,
-  ProductSchema,
   PaymentSchema,
   CategorySchema,
   BrandSchema,
@@ -26,7 +25,6 @@ mongoose
   .then(() => ContactSchema.createIndexes())
   .then(() => UserSchema.createIndexes())
   .then(() => MessageSchema.createIndexes())
-  .then(() => ProductSchema.createIndexes())
   .then(() => PaymentSchema.createIndexes())
   .then(() => CategorySchema.createIndexes())
   .then(() => OrderSchema.createIndexes())
