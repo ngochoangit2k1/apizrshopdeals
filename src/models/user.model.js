@@ -15,7 +15,8 @@ const UserSchema = mongoose.Schema(
     },
     
     idRef: {
-      type: String,
+      type: Number,
+      required: true,
     },
     idUser:{
       type: String,

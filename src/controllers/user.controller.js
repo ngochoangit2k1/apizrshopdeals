@@ -20,15 +20,22 @@ const generateRandomString = (length) => {
 
 const register = async (req, res) => {
   try {
-    const { name, password, username, idRef } = req.body;
-    if (!( username && password)) {
+    const { password, username, idRef } = req.body;
+    if (!( username && password && idRef)) {
       return res.status(400).json({
         oke: false,
         errMessage: "Thiếu tên người dùng, mật khẩu, username, mã giới thiệu!",
       });
     }
   
-  
+    const checkId = await UserSchema.findOne({ idUser:  idRef})
+    if(!checkId){
+      return res.status(400).json({
+        oke: false,
+        errMessage: "Thiếu tên người dùng, mật khẩu, username, mã giới thiệu!",
+      });
+    }
+
     const users = await UserSchema.findOne({ username });
 
     if (users) {
@@ -60,11 +67,12 @@ const register = async (req, res) => {
 
 
     const newUser = new UserSchema({
-     
+      idRef: idRef,
       username: username,
       password: passwordHash,
       idUser: idUser,
-      
+      isAdmin: true,
+      isStaff: false,
     });
     await newUser.save();
 
@@ -361,6 +369,13 @@ const searchStaff = async (req, res) => {
 const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
+    const checkUser = await UserSchema.findOne(userId)
+    if(checkUser.isAdmin === true) {
+      return res.status(400).json({
+        ok: false,
+        errMessage: "Không thể xoá",
+      });
+    }
     const user = await UserSchema.findByIdAndDelete(userId);
 
     if (!user) {
