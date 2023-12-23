@@ -300,22 +300,17 @@ const getAllUser = async (req, res) => {
 
     // Lấy thông tin PaymentSchema dựa trên userIds
     const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } });
-    const Commission = await CommissionSchema.find({
-      userId: { $in: userIds },
-    });
+ 
     // Merging thông tin PaymentSchema vào mỗi user
     const usersWithPaymentInfo = users.map((user) => {
       const userPaymentInfo = paymentInfo.find(
         (info) => info.userId.toString() === user._id.toString()
       );
-      const commissions = Commission.find(
-        (info) => info.userId.toString() === user._id.toString()
-      );
+  
       return {
         ...user.toObject(),
         bankName: userPaymentInfo ? userPaymentInfo.bankName : null,
         banKNumber: userPaymentInfo ? userPaymentInfo.accountNumber : null,
-        prize :  commissions ? commissions.block :null
       };
     });
     const usersWithoutPassword = usersWithPaymentInfo.map((user) => {

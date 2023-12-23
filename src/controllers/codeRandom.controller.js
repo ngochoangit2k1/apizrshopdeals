@@ -40,7 +40,6 @@ const createProductCode =  async (req, res) => {
     }
 }
 
-
 const createClientCode =  async (req, res) => {
     try {
         const random = generateRandomString(5)
