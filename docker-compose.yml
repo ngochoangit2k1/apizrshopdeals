@@ -5,15 +5,15 @@ services:
     ports:
       - "4001:4001"
     environment:
-      - MONGODB_URL=mongodb+srv://thanhtrung:thanhtrung@cluster0.btjkhos.mongodb.net/?retryWrites=true&w=majority
-      - MONGODB_USER=thanhtrung
-      - MONGODB_PASSWORD=thanhtrung
+      - MONGODB_URL=mongodb+srv://tranngochoang:01678908390@cluster0.jxh6v.mongodb.net/lostglobal?retryWrites=true&w=majority
+      - MONGODB_USER=tranngochoang
+      - MONGODB_PASSWORD=01678908390
     links:
       - db
   db:
     image: mongo
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=thanhtrung
-      - MONGO_INITDB_ROOT_PASSWORD=thanhtrung
+      - MONGO_INITDB_ROOT_USERNAME=tranngochoang
+      - MONGO_INITDB_ROOT_PASSWORD=01678908390
     ports:
       - "27017:27017"
