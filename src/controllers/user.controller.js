@@ -71,8 +71,7 @@ const register = async (req, res) => {
       username: username,
       password: passwordHash,
       idUser: idUser,
-      isAdmin: true,
-      isStaff: false,
+     
     });
     await newUser.save();
 
