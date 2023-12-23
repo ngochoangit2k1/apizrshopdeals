@@ -127,7 +127,7 @@ const referralCode = async (req, res) => {
 
 const registerAdmin = async (req, res) => {
   try {
-    const { name, password, username, isAdmin, isStaff } = req.body;
+    const { name, password, username} = req.body;
     if (!(name && username && password)) {
       return res.status(400).json({
         oke: false,
@@ -166,8 +166,7 @@ const registerAdmin = async (req, res) => {
       name: name,
       username: username,
       password: passwordHash,
-      isAdmin: isAdmin,
-      isStaff: isStaff,
+      isStaff: true,
     });
     await newUser.save();
     res.status(200).json({

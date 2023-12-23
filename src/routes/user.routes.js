@@ -10,7 +10,7 @@ router.get('/profile', verifyToken, userController.getUserProfile);
 router.patch('/update', verifyToken, upload.Avatar('avatar'), userController.updateProfile)
 // router.post('/register-staff', userController.register);
 //Admin
-router.post('/register-staff',  userController.registerAdmin);
+router.post('/register-staff',verifyToken, authAdmin,  userController.registerAdmin);
 router.get('/get-all-staff', verifyToken, authAdmin, userController.getAllUser);
 router.get('/search-staff', verifyToken, authAdmin, userController.searchStaff);
 router.delete('/:userId', verifyToken, authAdmin, userController.deleteStaff);
