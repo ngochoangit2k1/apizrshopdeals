@@ -22,31 +22,20 @@ const generateRandomString = (length) => {
 const register = async (req, res) => {
   try {
     const { name, password, username, idRef } = req.body;
-    if (!(name && username && password && idRef)) {
+    if (!( username && password)) {
       return res.status(400).json({
         oke: false,
         errMessage: "Thiếu tên người dùng, mật khẩu, username, mã giới thiệu!",
       });
     }
-    const idRefs = await UserSchema.findOne({ idUser: idRef });
-    if (!idRefs) {
-      return res.status(400).json({
-        oke: false,
-        errMessage: "Không có mã giới thiệu này",
-      });
-    }
-    if (!validateEmail(username)) {
-      return res.status(400).json({
-        oke: false,
-        errMessage: " Email không hợp lệ!",
-      });
-    }
+  
+  
     const users = await UserSchema.findOne({ username });
 
     if (users) {
       return res.status(400).json({
         oke: false,
-        errMessage: " Email đã được sử dụng!",
+        errMessage: " User đã được sử dụng!",
       });
     }
     if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
@@ -67,16 +56,16 @@ const register = async (req, res) => {
 
   do {
   idUser = generateRandomString(5);
-  const checkIdUser = await UserSchema.findOne({ idUser });
+   checkIdUser = await UserSchema.findOne({ idUser });
   } while (checkIdUser);
 
 
     const newUser = new UserSchema({
-      idRef: idRef,
-      name: name,
+     
       username: username,
       password: passwordHash,
       idUser: idUser,
+      
     });
     await newUser.save();
     res.status(200).json({
