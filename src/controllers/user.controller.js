@@ -159,6 +159,7 @@ const registerAdmin = async (req, res) => {
         errMessage: "Mật khẩu phải lớn hơn 6 kí tự!",
       });
     }
+    let idUser;
     do {
       idUser = generateRandomString(5);
       checkIdUser = await UserSchema.findOne({ idUser });
