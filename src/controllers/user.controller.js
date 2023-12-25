@@ -344,7 +344,7 @@ const searchStaff = async (req, res) => {
   try {
     const { name, username, idUser } = req.query;
     let query = {};
-
+    
     if (name && username && idUser) {
       query = {
         $and: [
@@ -362,8 +362,22 @@ const searchStaff = async (req, res) => {
     }
 
     const searchStaff = await UserSchema.find(query);
+    const userIds = searchStaff.map((user) => user._id);
 
-    return res.status(200).json(searchStaff);
+    // // Lấy thông tin PaymentSchema dựa trên userIds
+    const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } });
+    const usersWithPaymentInfo = searchStaff.map((user) => {
+      const userPaymentInfo = paymentInfo.find(
+        (info) => info.userId.toString() === user._id.toString()
+      );
+
+      return {
+        ...user.toObject(),
+        bankName: userPaymentInfo ? userPaymentInfo.bankName : null,
+        banKNumber: userPaymentInfo ? userPaymentInfo.accountNumber : null,
+      };
+    });
+    return res.status(200).json(usersWithPaymentInfo);
   } catch (error) {
     return res.status(400).json(error);
   }
