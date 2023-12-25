@@ -388,23 +388,22 @@ const addPoints = async (req, res) => {
       return res.status(404).json({ error: "not found" });
     }
     const checkWaller = await WalletSchema.findOne({ userId });
-    let addPoints;
 
     if (checkWaller) {
       const countAmount = checkWaller.totalAmount + points;
-      addPoints = await WalletSchema.findOneAndUpdate(
+    await WalletSchema.findOneAndUpdate(
         { userId },
         { totalAmount: countAmount }
       );
       historyAddPoints(userId, points);
     } else {
-      addPoints = await WalletSchema.create({
+      await WalletSchema.create({
         userId,
         totalAmount: points,
       });
       historyAddPoints(userId, points);
     }
-    return res.status(200).json({ message: true, addPoints });
+    return res.status(200).json({ message: true });
   } catch (error) {
     return res.status(400).json({ message: "no add points" });
   }
