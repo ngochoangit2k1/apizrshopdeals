@@ -130,7 +130,7 @@ const registerAdmin = async (req, res) => {
     if (!(username && password)) {
       return res.status(400).json({
         oke: false,
-        errMessage: "Thiếu tên người dùng, mật khẩu, username!",
+        errMessage: "Thiếu tên người dùng, mật khẩu!",
       });
     }
     if (!validateEmail(username)) {
