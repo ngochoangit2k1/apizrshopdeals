@@ -432,11 +432,10 @@ const getHistoryAddPoints = async (req, res) => {
       }).populate("userId");
       return res.status(200).json(history);
     } else {
-      const history = await HistoryWalletSchema.find({})
+      const history = await HistoryAddPointSchema.find({})
         .populate("userId")
         .sort({ createdAt: -1 })
-        .skip(pageSize * (pageNumber - 1)) // Bỏ qua các bản ghi đã hiển thị ở các trang trước
-        .limit(pageSize);
+        
       return res.status(200).json(history);
     }
   } catch (error) {
