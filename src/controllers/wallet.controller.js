@@ -332,13 +332,14 @@ const updateHistory = async (req, res, next) => {
 
 const getWallet = async (req, res) => {
   try {
-    const getWallet = await WalletSchema.findOne({ userId: req.user.id });
+    const getWallet = await HistoryAddPointSchema.findOne({ userId: req.user.id });
 
     return res.status(200).json({ getWallet });
   } catch (error) {
     return res.status(404).json({ error });
   }
 };
+
 
 const getAll = async (req, res) => {
   try {
