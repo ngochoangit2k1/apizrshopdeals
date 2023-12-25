@@ -301,7 +301,7 @@ const getUserProfile = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await UserSchema.find().sort("__v");
+    const users = await UserSchema.find({isAdmin: false}).sort("__v");
     const userIds = users.map((user) => user._id);
 
     // Lấy thông tin PaymentSchema dựa trên userIds
