@@ -413,7 +413,7 @@ const historyAddPoints = async (userId, points) => {
   try {
     const user = await UserSchema.findOne({ _id: userId });
     const data = await HistoryAddPointSchema.create({
-      userId: userId,
+      userId: user.userId,
       totalAmount: points,
       nameUser: user.nameUser,
     });
