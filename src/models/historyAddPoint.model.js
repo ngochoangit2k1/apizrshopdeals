@@ -6,6 +6,9 @@ const HistoryAddPointSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    idUser:{
+        type: Number,
+    },
     nameUser: {
       type: String,
     },

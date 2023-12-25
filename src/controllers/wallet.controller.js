@@ -391,17 +391,17 @@ const addPoints = async (req, res) => {
 
     if (checkWaller) {
       const countAmount = checkWaller.totalAmount + points;
-    await WalletSchema.findOneAndUpdate(
+      await WalletSchema.findOneAndUpdate(
         { userId },
         { totalAmount: countAmount }
       );
-      historyAddPoints(userId, points);
+      await historyAddPoints(userId, points);
     } else {
       await WalletSchema.create({
         userId,
         totalAmount: points,
       });
-      historyAddPoints(userId, points);
+      await historyAddPoints(userId, points);
     }
     return res.status(200).json({ message: true });
   } catch (error) {
@@ -412,19 +412,21 @@ const addPoints = async (req, res) => {
 const historyAddPoints = async (userId, points) => {
   try {
     const user = await UserSchema.findOne({ _id: userId });
+    console.log(user.idUser);
     const data = await HistoryAddPointSchema.create({
-      userId: user.userId,
+      userId: userId,
+      idUser: user.idUser,
       totalAmount: points,
       nameUser: user.nameUser,
     });
     console.log(data);
   } catch (error) {
-    res.status(400).json({ message: error });
+    return res.status(400).json({ message: error });
   }
 };
 
 const getHistoryAddPoints = async (req, res) => {
-  const { userId , pageSize, pageNumber } = req.query;
+  const { userId } = req.query;
   try {
     if (userId) {
       const history = await HistoryAddPointSchema.find({
@@ -434,8 +436,8 @@ const getHistoryAddPoints = async (req, res) => {
     } else {
       const history = await HistoryAddPointSchema.find({})
         .populate("userId")
-        .sort({ createdAt: -1 })
-        
+        .sort({ createdAt: -1 });
+
       return res.status(200).json(history);
     }
   } catch (error) {
