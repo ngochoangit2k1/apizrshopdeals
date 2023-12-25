@@ -21,15 +21,15 @@ const generateRandomString = (length) => {
 const register = async (req, res) => {
   try {
     const { password, username, idRef } = req.body;
-    if (!( username && password && idRef)) {
+    if (!(username && password && idRef)) {
       return res.status(400).json({
         oke: false,
         errMessage: "Thiếu tên người dùng, mật khẩu, username, mã giới thiệu!",
       });
     }
-  
-    const checkId = await UserSchema.findOne({ idUser:  idRef})
-    if(!checkId){
+
+    const checkId = await UserSchema.findOne({ idUser: idRef })
+    if (!checkId) {
       return res.status(400).json({
         oke: false,
         errMessage: "Thiếu tên người dùng, mật khẩu, username, mã giới thiệu!",
@@ -60,10 +60,10 @@ const register = async (req, res) => {
     const passwordHash = bcrypt.hashSync(password, salt);
     let idUser;
 
-  do {
-  idUser = generateRandomString(5);
-   checkIdUser = await UserSchema.findOne({ idUser });
-  } while (checkIdUser);
+    do {
+      idUser = generateRandomString(5);
+      checkIdUser = await UserSchema.findOne({ idUser });
+    } while (checkIdUser);
 
 
     const newUser = new UserSchema({
@@ -71,7 +71,6 @@ const register = async (req, res) => {
       username: username,
       password: passwordHash,
       idUser: idUser,
-     
     });
     await newUser.save();
 
@@ -127,8 +126,8 @@ const referralCode = async (req, res) => {
 
 const registerAdmin = async (req, res) => {
   try {
-    const { name, password, username} = req.body;
-    if (!(name && username && password)) {
+    const { password, username } = req.body;
+    if (!(username && password)) {
       return res.status(400).json({
         oke: false,
         errMessage: "Thiếu tên người dùng, mật khẩu, username!",
@@ -160,12 +159,17 @@ const registerAdmin = async (req, res) => {
         errMessage: "Mật khẩu phải lớn hơn 6 kí tự!",
       });
     }
+    do {
+      idUser = generateRandomString(5);
+      checkIdUser = await UserSchema.findOne({ idUser });
+    } while (checkIdUser);
+
     const salt = bcrypt.genSaltSync(10);
     const passwordHash = bcrypt.hashSync(password, salt);
     const newUser = new UserSchema({
-      name: name,
       username: username,
       password: passwordHash,
+      idUser: idUser,
       isStaff: true,
     });
     await newUser.save();
@@ -301,18 +305,18 @@ const getUserProfile = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await UserSchema.find({isAdmin: false}).sort("__v");
+    const users = await UserSchema.find({ isAdmin: false }).sort("__v");
     const userIds = users.map((user) => user._id);
 
     // Lấy thông tin PaymentSchema dựa trên userIds
     const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } });
- 
+
     // Merging thông tin PaymentSchema vào mỗi user
     const usersWithPaymentInfo = users.map((user) => {
       const userPaymentInfo = paymentInfo.find(
         (info) => info.userId.toString() === user._id.toString()
       );
-  
+
       return {
         ...user.toObject(),
         bankName: userPaymentInfo ? userPaymentInfo.bankName : null,
@@ -367,8 +371,8 @@ const searchStaff = async (req, res) => {
 const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
-    const checkUser = await UserSchema.findOne({_id: userId})
-    if(checkUser.isAdmin === true) {
+    const checkUser = await UserSchema.findOne({ _id: userId })
+    if (checkUser.isAdmin === true) {
       return res.status(400).json({
         ok: false,
         errMessage: "Không thể xoá",
