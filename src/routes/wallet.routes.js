@@ -4,13 +4,13 @@ const router = express.Router();
 const { verifyToken } = require("../middlewares/auth");
 const authAdmin = require("../middlewares/authAdmin");
 
-router.post("/add", verifyToken, walletController.addMoneyToWallet);
+router.post("/add", verifyToken, walletController.getHistoryAddPoints);
 router.post("/withdraw", verifyToken, walletController.withdrawMoneyToWallet);
 router.get(
   "/all-history",
   verifyToken,
   authAdmin,
-  walletController.getHistoryWallet
+  walletController.getHistoryAddPoints
 );
 router.get(
   "/history-user",

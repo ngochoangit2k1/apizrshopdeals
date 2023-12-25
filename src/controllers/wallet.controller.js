@@ -5,8 +5,7 @@ const UserSchema = require("../models/user.model");
 const ProductSchema = require("../models/product.model");
 const PaymentSchema = require("../models/payment.model");
 const OrderSchema = require("../models/order.model");
-
-
+const HistoryAddPointSchema = require("../models/historyAddPoint.model");
 // const VietQR  = require ('vietqr')
 // const vietQR = new VietQR({
 //   clientID: "832c296e-be15-4abc-842a-a15a41e98389",
@@ -116,6 +115,7 @@ const frizes = async (req, res) => {
     return res.status(400).json({ message: error });
   }
 };
+
 const openBlock = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -139,6 +139,7 @@ const openBlock = async (req, res) => {
     return res.status(400).json({ message: error });
   }
 };
+
 const calculateOder = async (req, totalAmount, next) => {
   const id = "654b9813e11c164e04528e38";
   const transaction = await ConfigTransitiontSchema.findOne({ _id: id });
@@ -169,18 +170,15 @@ const historywithdrawWallet = async (userId, totalAmount, codeOder, next) => {
   }
 };
 
-const historyRechargeWallet = async (userId, totalAmount, codeOder, next) => {
+const historyRechargeWallet = async (userId, totalAmount, next) => {
   try {
     const user = await UserSchema.findOne({ _id: userId });
-    console.log(user);
     const bank = await PaymentSchema.findOne({ userId: userId });
-    console.log(bank);
     const data = await HistoryWalletSchema.create({
       userId: userId,
       totalAmount: totalAmount,
       nameUser: user.nameUser,
       info: "recharge money",
-      codeOder: codeOder,
       bankName: bank.bankName,
       bankNumber: bank.accountNumber,
     });
@@ -234,12 +232,12 @@ const createCommission = async (req, userId, totalAmount, next) => {
 };
 
 const addMoneyToWallet = async (req, res) => {
-  const { bankName, totalAmount, codeOder } = req.body;
+  const { bankName, totalAmount } = req.body;
   const userId = req.user.id;
   try {
     const findWallet = await WalletSchema.findOne({ userId: userId });
     if (findWallet) {
-      await historyRechargeWallet(userId, totalAmount, codeOder);
+      await historyRechargeWallet(userId, totalAmount);
       // await createCommission(req, userId, totalAmount);
       return res.status(200).json({ message: "đang chờ xác nhận cộng tiền" });
     } else {
@@ -247,7 +245,7 @@ const addMoneyToWallet = async (req, res) => {
         userId: userId,
         bankName: bankName,
       });
-      await historyRechargeWallet(userId, totalAmount, codeOder);
+      await historyRechargeWallet(userId, totalAmount);
       await createCommission(userId, totalAmount);
       return res.status(200).json(walletAdd, "đang chờ xác nhận cộng tiền");
     }
@@ -286,6 +284,7 @@ const getHistoryWalletbyUser = async (req, res) => {
     return res.status(404).json({ error });
   }
 };
+
 const updateHistory = async (req, res, next) => {
   const { id } = req.query;
   try {
@@ -378,9 +377,77 @@ const getAll = async (req, res) => {
   }
 };
 
+const addPoints = async (req, res) => {
+  try {
+    const { points, userId } = req.body;
+    if (!points || !userId) {
+      return res.status(404).json({ error: "all fields" });
+    }
+    const checkUser = await UserSchema.findOne({ _id: userId });
+    if (!checkUser) {
+      return res.status(404).json({ error: "not found" });
+    }
+    const checkWaller = await WalletSchema.findOne({ userId });
+    let addPoints;
+
+    if (checkWaller) {
+      const countAmount = checkWaller.totalAmount + points;
+      addPoints = await WalletSchema.findOneAndUpdate(
+        { userId },
+        { totalAmount: countAmount }
+      );
+      historyAddPoints(userId, points);
+    } else {
+      addPoints = await WalletSchema.create({
+        userId,
+        totalAmount: points,
+      });
+      historyAddPoints(userId, points);
+    }
+    return res.status(200).json({ message: true, addPoints });
+  } catch (error) {
+    return res.status(400).json({ message: "no add points" });
+  }
+};
+
+const historyAddPoints = async (userId, points) => {
+  try {
+    const user = await UserSchema.findOne({ _id: userId });
+    const data = await HistoryAddPointSchema.create({
+      userId: userId,
+      totalAmount: points,
+      nameUser: user.nameUser,
+    });
+    console.log(data);
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
+};
+
+const getHistoryAddPoints = async (req, res) => {
+  const { userId , pageSize, pageNumber } = req.query;
+  try {
+    if (userId) {
+      const history = await HistoryAddPointSchema.find({
+        userId: { $regex: userId, $options: "i" },
+      }).populate("userId");
+      return res.status(200).json(history);
+    } else {
+      const history = await HistoryWalletSchema.find({})
+        .populate("userId")
+        .sort({ createdAt: -1 })
+        .skip(pageSize * (pageNumber - 1)) // Bỏ qua các bản ghi đã hiển thị ở các trang trước
+        .limit(pageSize);
+      return res.status(200).json(history);
+    }
+  } catch (error) {
+    return res.status(404).json({ error });
+  }
+};
 module.exports = {
-  // getBankName,
-  frizes,
+  historyAddPoints,
+  getHistoryAddPoints,
+  addPoints,
   addMoneyToWallet,
   getHistoryWallet,
   updateHistory,
