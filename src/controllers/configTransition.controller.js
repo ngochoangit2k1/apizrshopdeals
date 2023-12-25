@@ -55,9 +55,7 @@ const getTransactionsSettings = async (req, res) => {
   }
 };
 
-// const walletSettings  = async (req, res, next) => {
-//     const
-// }
+
 module.exports = {
   transitiontSetting,
   createTransitiontSetting,

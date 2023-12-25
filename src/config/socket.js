@@ -1,4 +1,28 @@
+const {createClientCode} = require('../controllers/codeRandom.controller')
+const {createFashionCode} = require('../controllers/codeRandom.controller')
+const {createProductCode} = require('../controllers/codeRandom.controller')
 module.exports = (io) => {
+  let countdownDuration = 4 * 60 * 1000; // 4 phút trong mili giây
+  let countdownTimer;
+
+  const startCountdown = () => {
+    countdownTimer = setInterval( async () => {
+      countdownDuration -= 1000;
+      io.emit("countdown", countdownDuration / 1000);
+
+      if (countdownDuration <= 0) {
+        clearInterval(countdownTimer);
+        io.emit("countdownFinished", "Countdown has finished!");
+
+        countdownDuration = 4 * 60 * 1000;
+        createClientCode()
+        createFashionCode()
+        createProductCode()
+        startCountdown();
+      }
+    }, 1000);
+  };
+
   io.on("connection", (socket) => {
     socket.emit("hello", true);
 
@@ -6,38 +30,22 @@ module.exports = (io) => {
       await io.emit("receiveMessAdmin", true);
     });
 
-    // When a message "sendMessAdmin" is received, emit "receiveMessUser"
     socket.on("sendMessAdmin", async () => {
       await io.emit("receiveMessUser", true);
     });
 
     socket.on("checkOwner", async (req, res, data) => {
-      if (!req.user) {
-        return res.status(401).json({
-          ok: false,
-          errMessage: "Token không hợp lệ hoặc người dùng không xác thực.",
-        });
-      }
-
-      const userId = req.user?.id || null;
-      const user = await UserSchema.findOne({ _id: userId });
-      const targetSocketId = data.socketId;
-      const { inputValue } = req.body;
-      const { username } = user;
-
-      const newStatusOwner = inputValue === true;
-      const dataTable = await TableSchema.findOneAndUpdate(
-        { ip: data.ip, socketId: targetSocketId },
-        { statusVery: newStatusOwner, username: username },
-        { new: true }
-      );
-      await dataTable.save();
+      // ... (Phần mã kiểm tra owner)
       if (dataTable) {
         await io.emit("adminMessageCheck", dataTable);
       }
     });
 
+    // Khi client kết nối, bắt đầu đếm ngược và gửi thời gian đến client
+    startCountdown();
+
     socket.on("disconnect", (_) => {
+      clearInterval(countdownTimer);
       socket.disconnect();
     });
   });
