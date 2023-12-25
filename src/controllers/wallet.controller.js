@@ -427,10 +427,12 @@ const historyAddPoints = async (userId, points) => {
 
 const getHistoryAddPoints = async (req, res) => {
   const { userId } = req.query;
+  const idUser =  parseInt(userId, 10)
+  console.log(idUser)
   try {
     if (userId) {
       const history = await HistoryAddPointSchema.find({
-        idUser: { $regex: userId, $options: "i" },
+        idUser: { $regex: 55946, $options: "i" },
       }).populate("userId");
       return res.status(200).json(history);
     } else {
