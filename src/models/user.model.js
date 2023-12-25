@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema(
     
     idRef: {
       type: Number,
-      required: true,
+      // required: true,
     },
     idUser:{
       type: String,
