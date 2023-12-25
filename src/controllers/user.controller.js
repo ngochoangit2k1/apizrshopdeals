@@ -337,23 +337,23 @@ const getAllUser = async (req, res) => {
 
 const searchStaff = async (req, res) => {
   try {
-    const { name, username } = req.query;
+    const { name, username, idUser } = req.query;
     let query = {};
 
-    if (name && username && username) {
+    if (name && username && idUser) {
       query = {
         $and: [
           { name: { $regex: name, $options: "i" } },
           { username: { $regex: username, $options: "i" } },
-          { username: { $regex: username, $options: "i" } },
+          { idUser: { $regex: idUser, $options: "i" } },
         ],
       };
     } else if (name) {
       query = { name: { $regex: name, $options: "i" } };
     } else if (username) {
       query = { username: { $regex: username, $options: "i" } };
-    } else if (username) {
-      query = { username: { $regex: username, $options: "i" } };
+    } else if (idUser) {
+      query = { idUser: { $regex: idUser, $options: "i" } };
     }
 
     const searchStaff = await UserSchema.find(query);
