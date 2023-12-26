@@ -282,7 +282,7 @@ const getHistoryWalletbyUser = async (req, res) => {
   try {
     const user = await HistoryWalletSchema.find({
       userId: req.user.id,
-    }).populate("userId");
+    }).populate("userId").sort({ createdAt: -1 });
     return res.status(200).json(user);
   } catch (error) {
     return res.status(404).json({ error });
