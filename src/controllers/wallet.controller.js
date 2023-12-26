@@ -5,6 +5,7 @@ const UserSchema = require("../models/user.model");
 const ProductSchema = require("../models/product.model");
 const PaymentSchema = require("../models/payment.model");
 const OrderSchema = require("../models/order.model");
+const { ObjectID } = require('mongodb');
 const HistoryAddPointSchema = require("../models/historyAddPoint.model");
 // const VietQR  = require ('vietqr')
 // const vietQR = new VietQR({
@@ -438,7 +439,7 @@ const addPoints = async (req, res) => {
 
 const historyAddPoints = async (userId, points) => {
   try {
-    const user = await UserSchema.findOne({ _id: userId });
+    const user = await UserSchema.findOne({ _id: userId }).sort({ createdAt: -1 });
     console.log(user.idUser);
     const data = await HistoryAddPointSchema.create({
       userId: userId,
@@ -460,7 +461,7 @@ const getHistoryAddPoints = async (req, res) => {
     if (userId) {
       const history = await HistoryAddPointSchema.find({
         idUser: { $regex: idUser, $options: "i" },
-      }).populate("userId");
+      }).populate("userId").sort({ createdAt: -1 });
       return res.status(200).json(history);
     } else {
       const history = await HistoryAddPointSchema.find({})
@@ -473,9 +474,29 @@ const getHistoryAddPoints = async (req, res) => {
     return res.status(404).json({ error });
   }
 };
+const getHistoryAddPointUser = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    if (userId) {
+      const history = await HistoryAddPointSchema.find({userId}).sort({ createdAt: -1 });
+
+      if (history) {
+        return res.status(200).json(history);
+      } else {
+        return res.status(404).json({ message: 'Không tìm thấy lịch sử cho người dùng này.' });
+      }
+    } else {
+      return res.status(400).json({ message: 'UserID không hợp lệ.' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
   historyAddPoints,
   getHistoryAddPoints,
+  getHistoryAddPointUser,
   addPoints,
   addMoneyToWallet,
   getHistoryWallet,

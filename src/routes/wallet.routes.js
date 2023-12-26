@@ -13,6 +13,11 @@ router.get(
   walletController.getHistoryAddPoints
 );
 router.get(
+  "/user-point-history",
+  verifyToken,
+  walletController.getHistoryAddPointUser
+);
+router.get(
   "/history-user",
   verifyToken,
   walletController.getHistoryWalletbyUser
