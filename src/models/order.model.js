@@ -7,6 +7,12 @@ const OrderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    idUser: {
+      type: String,
+    },
+    username: {
+      type: String,
+    },
     countNum: {
       type: Number,
     },
