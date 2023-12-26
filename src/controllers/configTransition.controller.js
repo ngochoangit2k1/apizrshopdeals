@@ -15,13 +15,49 @@ const transitiontSetting = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+const getSetting = async (req, res) => {
+  // const { number } = req.query;
+  try {
+    const transactions = await ConfigTransitiontSchema.find({});
 
+    // Tạo một mảng để lưu các giao dịch đã cập nhật
+    // const updatedTransactions = [];
+
+    // // Sử dụng vòng lặp for để tạo mảng giao dịch đã cập nhật
+    // for (let i = 1; i < number; i++) {
+    //   for (const transaction of transactions) {
+    //     const updatedMoney = transaction.money * (number - (number - i));
+    //     const updateNumberOder = transaction.numberOder * (number - (number - i))
+    //     updatedTransactions.push({
+    //       ...transaction.toObject(),
+    //       money: updatedMoney,
+    //       numberOder: updateNumberOder
+    //     });
+    //   }
+    // }
+
+    return res.status(200).json(transactions);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 const createTransitiontSetting = async (req, res) => {
   const { money, numberOder } = req.body;
   try {
     const transaction = await ConfigTransitiontSchema.create({
       money: money,
       numberOder: numberOder,
+    });
+    return res.status(200).json(transaction);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+const updataTransitiontSetting = async (req, res) => {
+  const { money } = req.body;
+  try {
+    const transaction = await ConfigTransitiontSchema.findOneAndUpdate({
+      money: money,
     });
     return res.status(200).json(transaction);
   } catch (error) {
@@ -95,6 +131,8 @@ const getCountdownSettings = async (req, res) => {
 }
 module.exports = {
   transitiontSetting,
+  getSetting,
+  updataTransitiontSetting,
   createTransitiontSetting,
   getTransactionsSettings,
   // countdownSettings
