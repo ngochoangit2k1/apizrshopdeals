@@ -7,6 +7,10 @@ const FashionSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    fashionPlus: {
+      type: String,
+      
+    },
     randomNumber: {
       type: String,
     },

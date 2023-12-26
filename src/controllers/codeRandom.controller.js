@@ -14,19 +14,30 @@ const generateRandomString = (length) => {
 
   return result;
 };
-
+const currentTime = new Date();
+const day = currentTime.getDate().toString().padStart(2, "0");
+const month = (currentTime.getMonth() + 1).toString().padStart(2, "0"); // Lưu ý: Tháng trong JavaScript bắt đầu từ 0
+const year = currentTime.getFullYear().toString();
 //Fashion
+
 const createFashionCode = async (req, res) => {
   try {
     const random = generateRandomString(5);
+    const getClientCode = await FashionSchema.find()
+      .sort({ createdAt: -1 })
+      .limit(1);
+    console.log(getClientCode[0].fashionCode)
+    const formattedDate = day + month + year + (getClientCode[0].fashionCode +1);
+    console.log(formattedDate);
     const clientCode = await FashionSchema.create({
       randomNumber: random,
+      fashionPlus:formattedDate
     });
     console.log(clientCode);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-};  
+};
 
 const getFashionCode = async (req, res) => {
   try {
@@ -54,8 +65,14 @@ const getNewFashionCode = async (req, res) => {
 const createProductCode = async (req, res) => {
   try {
     const random = generateRandomString(5);
+    const getClientCode = await ProductSchema.find()
+      .sort({ createdAt: -1 })
+      .limit(1);
+    console.log(getClientCode[0].productCode)
+    const formattedDate = day + month + year + (getClientCode[0].productCode +1);
     const clientCode = await ProductSchema.create({
       randomNumber: random,
+      productCodePlus:formattedDate
     });
     console.log(clientCode);
   } catch (error) {
@@ -88,13 +105,20 @@ const getNewProductCode = async (req, res) => {
 const createClientCode = async (req, res) => {
   try {
     const random = generateRandomString(5);
-    await ClientSchema.create({
+    const getClientCode = await ClientSchema.find()
+    .sort({ createdAt: -1 })
+    .limit(1);
+  console.log(getClientCode[0].clientCode)
+  const formattedDate = day + month + year + (getClientCode[0].clientCode +1);
+ const client =   await ClientSchema.create({
       randomNumber: random,
+      clientCodePlus: formattedDate
     });
+
   } catch (error) {
-    return res.status(400).json(err);
+    return res.status(400).json(error);
   }
-};
+};    
 
 const getClientCode = async (req, res) => {
   try {
