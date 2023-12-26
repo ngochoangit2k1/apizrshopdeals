@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/create",  configTransitiontController.createTransitiontSetting);
 router.patch("/update",  configTransitiontController.updataTransitiontSetting);
-
+router.get("/get",  configTransitiontController.getSetting);
 router.get("/get-transition", configTransitiontController.getTransactionsSettings);
 router.patch("/setting",verifyToken, authAdmin, configTransitiontController.transitiontSetting);
 
