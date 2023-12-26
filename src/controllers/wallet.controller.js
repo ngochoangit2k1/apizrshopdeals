@@ -193,11 +193,15 @@ const withdrawMoneyToWallet = async (req, res) => {
   try {
     const userId = req.user.id;
     const findWallet = await WalletSchema.findOne({ userId: userId });
-    if (findWallet.totalAmount < totalAmount) {
+    const a = findWallet.totalAmount
+    if (a < totalAmount) {
       return res.status(400).json({ error: "Bạn ko đủ điểm để rút" });
     }
     if (findWallet) {
       console.log(userId);
+      const sum = a - totalAmount
+      // await sum.push
+      await WalletSchema.findOneAndUpdate({ userId: userId }, { totalAmount: sum});
       await historywithdrawWallet(userId, totalAmount, codeOder);
       return res.status(200).json("đang chờ xác nhận rút tiền");
     } else {
