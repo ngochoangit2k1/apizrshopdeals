@@ -1,29 +1,32 @@
-const {createClientCode} = require('../controllers/codeRandom.controller')
-const {createFashionCode} = require('../controllers/codeRandom.controller')
-const {createProductCode} = require('../controllers/codeRandom.controller')
+const { createClientCode } = require("../controllers/codeRandom.controller");
+const { createFashionCode } = require("../controllers/codeRandom.controller");
+const { createProductCode } = require("../controllers/codeRandom.controller");
 module.exports = (io) => {
-  let countdownDuration = 4 * 60 * 1000; // 4 phút trong mili giây
-  let countdownTimer;
+  let countdownInterval;
 
   const startCountdown = () => {
-    countdownTimer = setInterval( async () => {
-      countdownDuration -= 1000;
-      io.emit("countdown", countdownDuration / 1000);
+    if (!countdownInterval) {
+      let timeLeft = 240; // 4 minutes in seconds
 
-      if (countdownDuration <= 0) {
-        clearInterval(countdownTimer);
-        io.emit("countdownFinished", "Countdown has finished!");
+      countdownInterval = setInterval(() => {
+        io.emit('updateTime', timeLeft);
 
-        countdownDuration = 4 * 60 * 1000;
-        createClientCode()
-        createFashionCode()
-        createProductCode()
-        startCountdown();
-      }
-    }, 1000);
+        if (timeLeft === 0) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          io.emit('countdownFinished');
+          createProductCode();
+          createClientCode()
+          createFashionCode()
+          startCountdown()
+        } else {
+          timeLeft--;
+        }
+      }, 1000);
+    }
   };
-
   io.on("connection", (socket) => {
+
     socket.emit("hello", true);
 
     socket.on("sendMessUser", async () => {
@@ -45,7 +48,6 @@ module.exports = (io) => {
     startCountdown();
 
     socket.on("disconnect", (_) => {
-      clearInterval(countdownTimer);
       socket.disconnect();
     });
   });

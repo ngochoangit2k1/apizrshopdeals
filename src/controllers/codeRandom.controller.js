@@ -22,12 +22,11 @@ const createFashionCode = async (req, res) => {
     const clientCode = await FashionSchema.create({
       randomNumber: random,
     });
-    return res.status(200).json(clientCode);
+    console.log(clientCode);
   } catch (error) {
-    return res.status(400).json(err);
+    console.log(error)
   }
-};
-
+};  
 
 const getFashionCode = async (req, res) => {
   try {
@@ -58,7 +57,7 @@ const createProductCode = async (req, res) => {
     const clientCode = await ProductSchema.create({
       randomNumber: random,
     });
-    return res.status(200).json(clientCode);
+    console.log(clientCode);
   } catch (error) {
     return res.status(400).json(err);
   }
@@ -89,10 +88,9 @@ const getNewProductCode = async (req, res) => {
 const createClientCode = async (req, res) => {
   try {
     const random = generateRandomString(5);
-    const clientCode = await ClientSchema.create({
+    await ClientSchema.create({
       randomNumber: random,
     });
-    return res.status(200).json(clientCode);
   } catch (error) {
     return res.status(400).json(err);
   }
