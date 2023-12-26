@@ -493,6 +493,27 @@ const getHistoryAddPointUser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const historywithdrawWalletAdmin = async (req, res) => {
+  const { userId } = req.query;
+  const idUser = parseInt(userId, 10)
+  console.log(idUser)
+  try {
+    if (userId) {
+      const history = await HistoryWalletSchema.find({
+        idUser: { $regex: idUser, $options: "i" },
+      }).populate("userId").sort({ createdAt: -1 });
+      return res.status(200).json(history);
+    } else {
+      const history = await HistoryWalletSchema.find({})
+        .populate("userId")
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json(history);
+    }
+  } catch (error) {
+    return res.status(404).json({ error });
+  }
+};
 module.exports = {
   historyAddPoints,
   getHistoryAddPoints,
@@ -501,6 +522,7 @@ module.exports = {
   addMoneyToWallet,
   getHistoryWallet,
   updateHistory,
+  historywithdrawWalletAdmin,
   withdrawMoneyToWallet,
   takeOder,
   showTakeOrder,
