@@ -7,7 +7,7 @@ const ClientSchema = mongoose.Schema({
   type:0
  },
  randomNumber:{
-  type: Number,
+  type: String,
  }
 },
 { timestamps: true }

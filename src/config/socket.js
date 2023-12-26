@@ -1,12 +1,16 @@
 const { createClientCode } = require("../controllers/codeRandom.controller");
 const { createFashionCode } = require("../controllers/codeRandom.controller");
 const { createProductCode } = require("../controllers/codeRandom.controller");
-module.exports = (io) => {
-  let countdownInterval;
+const countdownConfigSchema = require("../models/countdownConfig.model")
 
-  const startCountdown = () => {
+module.exports =  (io) => {
+  let countdownInterval;
+  const id = '658aef294dd9f01b18a3adc7'
+  const startCountdown =async () => {
+    const countdownConfig = await countdownConfigSchema.findOne({_id:id})
+
     if (!countdownInterval) {
-      let timeLeft = 240; // 4 minutes in seconds
+      let timeLeft = countdownConfig.countdown * 60; // 4 minutes in seconds
 
       countdownInterval = setInterval(() => {
         io.emit('updateTime', timeLeft);

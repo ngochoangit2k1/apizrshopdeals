@@ -7,7 +7,7 @@ const ProductSchema = mongoose.Schema({
   default: 0,
  },
  randomNumber:{
-  type: Number,
+  type: String,
  }
 },
 { timestamps: true }

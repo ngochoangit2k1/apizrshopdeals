@@ -1,5 +1,6 @@
 const WalletSchema = require("../models/wallet.model");
 const ConfigTransitiontSchema = require("../models/configTransition.model");
+const countdownConfigSchema = require("../models/countdownConfig.model")
 
 const transitiontSetting = async (req, res) => {
   const { money, numberOder } = req.body;
@@ -66,9 +67,49 @@ const getTransactionsSettings = async (req, res) => {
   }
 };
 
+const countdownSettings = async (req, res) => {
+  const { countdown } = req.body;
+  const id = "658aef294dd9f01b18a3adc7"
+  try {
+    const transaction = await countdownConfigSchema.findOneAndUpdate(
+      { _id: id },
+      { countdown:countdown }
+    );
+    return res.status(200).json({message:"bạn update thành công.", data: transaction});
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 
+const createCountdownSettings = async (req, res) => {
+    const { countdown } = req.body;
+  try {
+    const transaction = await countdownConfigSchema.create({
+      countdown:countdown
+    });
+    return res.status(200).json(transaction);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+const getCountdownSettings = async (req, res) => {
+  try {
+    const id = "658aef294dd9f01b18a3adc7"
+
+    const transaction = await countdownConfigSchema.findOne(
+      { _id: id },
+    );
+    return res.status(200).json(transaction);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 module.exports = {
   transitiontSetting,
   createTransitiontSetting,
-  getTransactionsSettings
+  getTransactionsSettings,
+  // countdownSettings
+  countdownSettings,
+  createCountdownSettings,
+  getCountdownSettings
 };
