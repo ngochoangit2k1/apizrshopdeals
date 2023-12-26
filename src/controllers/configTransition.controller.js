@@ -27,6 +27,17 @@ const createTransitiontSetting = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+const updataTransitiontSetting = async (req, res) => {
+  const { money } = req.body;
+  try {
+    const transaction = await ConfigTransitiontSchema.findOneAndUpdate({
+      money: money,
+    });
+    return res.status(200).json(transaction);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 const getTransactionsSettings = async (req, res) => {
   const { number } = req.query;
