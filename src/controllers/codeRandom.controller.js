@@ -67,7 +67,7 @@ const getProductCode = async (req, res) => {
     const getProductCode = await ProductSchema.find()
       .sort({ createdAt: -1 })
       .limit(20);
-    return res.status(200).json(getClientCode);
+    return res.status(200).json(getProductCode);
   } catch (error) {
     return res.status(400).json(err);
   }
@@ -78,7 +78,7 @@ const getNewProductCode = async (req, res) => {
     const getProductCode = await ProductSchema.find()
       .sort({ createdAt: -1 })
       .limit(1);
-    return res.status(200).json(getClientCode);
+    return res.status(200).json(getProductCode);
   } catch (error) {
     return res.status(400).json(err);
   }
