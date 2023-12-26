@@ -194,7 +194,7 @@ const withdrawMoneyToWallet = async (req, res) => {
     const userId = req.user.id;
     const findWallet = await WalletSchema.findOne({ userId: userId });
     if (findWallet.totalAmount < totalAmount) {
-      return res.status(400).json({ error: "Bạn ko đủ tiền để rút" });
+      return res.status(400).json({ error: "Bạn ko đủ điểm để rút" });
     }
     if (findWallet) {
       console.log(userId);
@@ -332,14 +332,36 @@ const updateHistory = async (req, res, next) => {
 
 const getWallet = async (req, res) => {
   try {
-    const getWallet = await HistoryAddPointSchema.findOne({ userId: req.user.id });
+    const userId = req.user.id;
+    // const getWallet = await HistoryAddPointSchema.findOne({ userId: req.user.id });
+    const getWallet = await WalletSchema.findOne({ userId });
+    const configRate = await ConfigTransitiontSchema.findOne();
 
-    return res.status(200).json({ getWallet });
+    if (!getWallet) {
+      return res.status(404).json({ error: 'Wallet not found for the user.' });
+    }
+    console.log(configRate)
+
+    // Thêm thông tin từ configRate vào wallet
+    getWallet.money = configRate;
+
+    return res.status(200).json({
+      // totalAmount: getWallet.totalAmount,
+      // _id: getWallet._id,
+      // userId: getWallet.userId 
+      getWallet: {
+        totalAmount: getWallet.totalAmount,
+        _id: getWallet._id,
+        userId: getWallet.userId,
+        money: getWallet.money,
+        createdAt: getWallet.createdAt,
+        updatedAt: getWallet.updatedAt
+      }
+    });
   } catch (error) {
-    return res.status(404).json({ error });
+    return res.status(500).json({ error: error.message });
   }
 };
-
 
 const getAll = async (req, res) => {
   try {
@@ -428,7 +450,7 @@ const historyAddPoints = async (userId, points) => {
 
 const getHistoryAddPoints = async (req, res) => {
   const { userId } = req.query;
-  const idUser =  parseInt(userId, 10)
+  const idUser = parseInt(userId, 10)
   console.log(idUser)
   try {
     if (userId) {

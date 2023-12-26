@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const UserSchema = require("../models/user.model");
 const auth = require("../middlewares/auth");
+const WalletSchema = require("../models/wallet.model");
 const config = require("../config/config");
 const { validateEmail } = require("../validates/auth.validate");
 const PaymentSchema = require("../models/payment.model");
@@ -311,23 +312,31 @@ const getAllUser = async (req, res) => {
 
     // Lấy thông tin PaymentSchema dựa trên userIds
     const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } });
+    const getWallet = await WalletSchema.find({ userId: { $in: userIds } });
 
     // Merging thông tin PaymentSchema vào mỗi user
     const usersWithPaymentInfo = users.map((user) => {
       const userPaymentInfo = paymentInfo.find(
-        (info) => info.userId.toString() === user._id.toString()
+        (info) => info.userId && user._id && info.userId.toString() === user._id.toString()
       );
-
+    
+      const userWalletInfo = getWallet.filter(
+        (info) => info.userId && user._id && info.userId.toString() === user._id.toString()
+      );
+    
       return {
         ...user.toObject(),
         bankName: userPaymentInfo ? userPaymentInfo.bankName : null,
         banKNumber: userPaymentInfo ? userPaymentInfo.accountNumber : null,
+        walletBalance: userWalletInfo.length > 0 ? userWalletInfo.map(w => w.totalAmount) : null,
       };
     });
+
     const usersWithoutPassword = usersWithPaymentInfo.map((user) => {
       const { password, isAdmin, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
+
     const countAllUsers = users.length;
 
     return res.status(200).json({
