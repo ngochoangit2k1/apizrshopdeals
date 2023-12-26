@@ -67,29 +67,37 @@ const getClientCode = async (req, res) => {
 const createOrder = async (req, res) => {
     try {
         const userId = req.user.id;
-        const countNum = req.body
-        const {codeOrder, randomNumber} = req.body;
-        const wallet = await WalletSchema.findOne({ userId: userId })
-        const totalmount = wallet.totalAmount
-        if (totalmount > 0 && countNum > 0) {
+        const { countNum, codeOrder, randomNumber } = req.body;
+
+        const wallet = await WalletSchema.findOne({ userId: userId });
+        if (!wallet) {
+            return res.status(400).json({ error: 'Không tìm thấy ví người dùng' });
+        }
+
+        const totalAmount = wallet.totalAmount;
+        console.log(totalAmount);
+
+        if (totalAmount > 0 && countNum > 0 && totalAmount >= countNum) {
             await OrderSchema.create({
                 userId: userId,
                 countNum: countNum,
                 codeOrder: codeOrder,
                 randomNumber: randomNumber
             });
-            const updateMount = await WalletSchema.findOne({ userId: userId })
-            const a = updateMount.totalAmount - countNum
-            await WalletSchema.findByIdAndUpdate({ userId: userId}, {totalAmount: a})
+
+            const updatedTotalAmount = totalAmount - countNum;
+            await WalletSchema.findOneAndUpdate({ userId: userId }, { totalAmount: updatedTotalAmount });
+
+            return res.status(200).json({ success: true, message: 'Đã tạo đơn hàng thành công' });
         } else {
-            return res.status(400).json(err);
+            return res.status(400).json({ error: 'Số điểm không đủ hoặc số lượng không hợp lệ' });
         }
-        
-        // console.log(clientCode);
     } catch (error) {
-        return res.status(400).json(err);
+        console.error(error);
+        return res.status(500).json({ error: 'Lỗi server' });
     }
 };
+
 module.exports = {
     createOrder,
     createProductCode,
