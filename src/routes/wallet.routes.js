@@ -9,12 +9,12 @@ router.post("/withdraw", verifyToken, walletController.withdrawMoneyToWallet);
 router.get(
   "/all-history",
   verifyToken,
-  // authAdmin,
+  authAdmin,
   walletController.getHistoryAddPoints
 );
 router.get(
   "/admin-all-history",
-  verifyToken,
+  // verifyToken,
   // authAdmin,
   walletController.historywithdrawWalletAdmin
 );
