@@ -4,8 +4,11 @@ const autoIncrement = require('mongoose-auto-increment');
 const ClientSchema = mongoose.Schema({
  clientCode:{
   type: Number,
-  type:0
+  default:0
  },
+ clientCodePlus:{
+    type: String,
+},
  randomNumber:{
   type: String,
  }

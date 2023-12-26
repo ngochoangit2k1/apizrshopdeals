@@ -7,4 +7,8 @@ const router = express.Router();
 
 router.post("/create", verifyToken, orderController.createOrder);
 
+router.get("/get-all", verifyToken, orderController.HistoryAllOrders)
+router.get("/get-history-user", verifyToken, orderController.HistoryOrdersByUser)
+router.patch("/update-history-user", verifyToken, orderController.UpdateStatusHistory)
+
 module.exports = router;
