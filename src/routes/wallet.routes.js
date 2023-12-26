@@ -18,6 +18,12 @@ router.get(
   // authAdmin,
   walletController.historywithdrawWalletAdmin
 );
+router.patch(
+  "/update-all-history",
+  verifyToken,
+  // authAdmin,
+  walletController.updateWalletAdmin
+);
 router.get(
   "/user-point-history",
   verifyToken,

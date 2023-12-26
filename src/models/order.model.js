@@ -2,48 +2,19 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      default: "",
-    },
-    complete: { type: String, default: "pending" },
-    address: { type: String },
-    email: { type: String, default: "" },
-    phone: {
-      type: String,
-    },
+    status: { type: String, default: "pending" },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-
-    code: {
-      type: String,
-    },
-    mota: {
-      type: String,
-    },
-    note: {
-      type: String,
-      default: "",
-    },
-    status: {
-      type: Boolean,
-      default: false,
-    },
-    soDon: {
+    countNum: {
       type: Number,
     },
-    quantity: {
-      type: Number,
+    codeOrder: {
+      type: String,
     },
-    Sum: {
-      type: Number,
-    },
-    products: [{ type: Object, required: true }],
-    isPayment: {
-      type: Boolean,
-      default: false,
+    randomNumber: {
+      type: String,
     },
   },
   { timestamps: true }
