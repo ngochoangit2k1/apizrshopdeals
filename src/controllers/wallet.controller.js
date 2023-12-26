@@ -334,6 +334,51 @@ const updateHistory = async (req, res, next) => {
     return res.status(404).json({ error });
   }
 };
+const updateWalletAdmin = async (req, res, next) => {
+  const { id } = req.params;
+  // const { userId } = req.params;
+  const status = req.body.status;
+  try {
+    const checkHistory = await HistoryWalletSchema.findOne({ _id: id });
+
+    if (!checkHistory || checkHistory.status === "done") {
+      return res.status(200).json({ message: "bạn đã bấm xác nhận" });
+    }
+    // console.log(history)
+    const findWallet = await WalletSchema.findOne({
+      userId: checkHistory.userId,
+    });
+    const userId = checkHistory.userId;
+    const totalAmount = checkHistory.totalAmount;
+    console.log(checkHistory);
+    if (checkHistory.status === "pde") {
+      const data = await WalletSchema.findOneAndUpdate(
+        { userId: checkHistory.userId },
+        { totalAmount: findWallet.totalAmount + totalAmount }
+      );
+      console.log("data", data);
+      await HistoryWalletSchema.findOneAndUpdate(
+        { _id: id },
+        { status: "done" }
+      );
+
+      await createCommission(req, userId, totalAmount);
+      next;
+    } else {
+      await WalletSchema.findOneAndUpdate(
+        { userId: userId },
+        { totalAmount: findWallet.totalAmount - totalAmount }
+      );
+      await HistoryWalletSchema.findOneAndUpdate(
+        { _id: id },
+        { status: "done" }
+      );
+    }
+    return res.status(200).json({ message: "trả về thành công" });
+  } catch (error) {
+    return res.status(404).json({ error });
+  }
+};
 
 const getWallet = async (req, res) => {
   try {
@@ -501,12 +546,12 @@ const historywithdrawWalletAdmin = async (req, res) => {
     if (userId) {
       const history = await HistoryWalletSchema.find({
         idUser: { $regex: idUser, $options: "i" },
-      }).populate("userId").sort({ createdAt: -1 });
+      }).populate("userId").sort({ createdAt: -1 }).limit(30);
       return res.status(200).json(history);
     } else {
       const history = await HistoryWalletSchema.find({})
         .populate("userId")
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 }).limit(30);
 
       return res.status(200).json(history);
     }
@@ -515,6 +560,7 @@ const historywithdrawWalletAdmin = async (req, res) => {
   }
 };
 module.exports = {
+  updateWalletAdmin,
   historyAddPoints,
   getHistoryAddPoints,
   getHistoryAddPointUser,
