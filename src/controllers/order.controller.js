@@ -179,6 +179,13 @@ const UpdateStatusOrder = async (req, res, next) => {
         { status: status }
       );
     }
+    if (status === "lost") {
+      await OrderSchema.findOneAndUpdate(
+        { _id: id },
+        { status: status }
+      );
+      return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "true" });
+    }
     if (status === "delete") {
       await OrderSchema.findOneAndDelete({ _id: id });
       return res.status(200).json({ message: "delete true", status: "true"});
