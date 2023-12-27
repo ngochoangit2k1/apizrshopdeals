@@ -151,16 +151,16 @@ const HistoryOrdersByUser = async (req, res) => {
 // };
 const UpdateStatusOrder = async (req, res, next) => {
   try {
-    const { id } = req.params.id;
+    const id = req.params.id;
     const { status } = req.body;
-    const checkHistory = await OrderSchema.findOne({ _id: id });
+    const checkHistory = await OrderSchema.findById(id);
     if (!checkHistory) {
       return res.status(404).json({ message: "Không tìm thấy lịch sử ví", status: "false" });
     }
     if (status === "done") {
-      await OrderSchema.findOneAndUpdate({ _id: id }, { status: status });
+      await OrderSchema.findByIdAndUpdate(id, { status: status });
 
-      return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "true" });
+      return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "done" });
     } else if (status === "false") {
       await OrderSchema.findOneAndUpdate({ _id: id }, { status: status });
       const findWL = await WalletSchema.findOne({
@@ -171,24 +171,22 @@ const UpdateStatusOrder = async (req, res, next) => {
         { userId: checkHistory.userId },
         { totalAmount: a + checkHistory.totalAmount }
       );
-      return res.status(200).json({ message: "Bạn đã bấm từ chối" , status: "true"});
+      return res.status(200).json({ message: "Bạn đã bấm từ chối" , status: "false"});
     }
     if (status === "pending") {
-      await OrderSchema.findOneAndUpdate(
-        { _id: id },
+      await OrderSchema.findByIdAndUpdate(id,
         { status: status }
       );
     }
     if (status === "lost") {
-      await OrderSchema.findOneAndUpdate(
-        { _id: id },
+      await OrderSchema.findByIdAndUpdate(id,
         { status: status }
       );
-      return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "true" });
+      return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "lost" });
     }
     if (status === "delete") {
-      await OrderSchema.findOneAndDelete({ _id: id });
-      return res.status(200).json({ message: "delete true", status: "true"});
+      await OrderSchema.findByIdAndDelete(id);
+      return res.status(200).json({ message: "delete true", status: "delete"});
     }
   } catch (error) {
     return res.status(500).json({ error: error.message });
