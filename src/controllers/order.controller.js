@@ -137,24 +137,63 @@ const HistoryOrdersByUser = async (req, res) => {
   }
 };
 
-const UpdateStatusHistory = async (req, res) => {
+// const UpdateStatusHistory = async (req, res) => {
+//   try {
+//     const { idHistory } = req.query;
+//     const updateHistory = await OrderSchema.findOneAndUpdate(
+//       { _id: idHistory },
+//       { status: "done" }
+//     );
+//     return res.status(200).json({ message: "done", updateHistory });
+//   } catch (error) {
+//     return res.status(500).json({ error: "Lỗi server" });
+//   }
+// };
+const UpdateStatusOrder = async (req, res, next) => {
   try {
-    const { idHistory } = req.query;
-    const updateHistory = await OrderSchema.findOneAndUpdate(
-      { _id: idHistory },
-      { status: "done" }
-    );
-    return res.status(200).json({ message: "done", updateHistory });
+    const { id } = req.query;
+    const { status } = req.body;
+    const checkHistory = await OrderSchema.findOne({ _id: id });
+    if (!checkHistory) {
+      return res.status(404).json({ message: "Không tìm thấy lịch sử ví", status: "false" });
+    }
+    if (status === "done") {
+      await OrderSchema.findOneAndUpdate({ _id: id }, { status: status });
+
+      return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "true" });
+    } else if (status === "false") {
+      await OrderSchema.findOneAndUpdate({ _id: id }, { status: status });
+      const findWL = await WalletSchema.findOne({
+        userId: checkHistory.userId,
+      });
+      const a = findWL.totalAmount;
+      await WalletSchema.findOneAndUpdate(
+        { userId: checkHistory.userId },
+        { totalAmount: a + checkHistory.totalAmount }
+      );
+      return res.status(200).json({ message: "Bạn đã bấm từ chối" , status: "true"});
+    }
+    if (status === "pending") {
+      await OrderSchema.findOneAndUpdate(
+        { _id: id },
+        { status: status }
+      );
+    }
+    if (status === "delete") {
+      await OrderSchema.findOneAndDelete({ _id: id });
+      return res.status(200).json({ message: "delete true", status: "true"});
+    }
   } catch (error) {
-    return res.status(500).json({ error: "Lỗi server" });
+    return res.status(500).json({ error: error.message });
   }
 };
+
 module.exports = {
-  UpdateStatusHistory,
+  UpdateStatusOrder,
   HistoryOrdersByUser,
   createOrder,
   createProductCode,
   getNewProductCode,
   getProductCode,
   HistoryAllOrders,
-};
+}
