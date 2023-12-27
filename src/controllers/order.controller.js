@@ -151,7 +151,7 @@ const HistoryOrdersByUser = async (req, res) => {
 // };
 const UpdateStatusOrder = async (req, res, next) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params.id;
     const { status } = req.body;
     const checkHistory = await OrderSchema.findOne({ _id: id });
     if (!checkHistory) {
