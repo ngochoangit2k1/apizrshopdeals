@@ -202,7 +202,7 @@ const withdrawMoneyToWallet = async (req, res) => {
       console.log(userId);
       const sum = a - totalAmount
       // await sum.push
-      await WalletSchema.findOneAndUpdate({ userId: userId }, { totalAmount: sum});
+      await WalletSchema.findOneAndUpdate({ userId: userId }, { totalAmount: sum });
       await historywithdrawWallet(userId, totalAmount, codeOder);
       return res.status(200).json("đang chờ xác nhận rút tiền");
     } else {
@@ -307,51 +307,6 @@ const updateHistory = async (req, res, next) => {
     const totalAmount = checkHistory.totalAmount;
     console.log(checkHistory);
     if (checkHistory.info === "recharge money") {
-      const data = await WalletSchema.findOneAndUpdate(
-        { userId: checkHistory.userId },
-        { totalAmount: findWallet.totalAmount + totalAmount }
-      );
-      console.log("data", data);
-      await HistoryWalletSchema.findOneAndUpdate(
-        { _id: id },
-        { status: "done" }
-      );
-
-      await createCommission(req, userId, totalAmount);
-      next;
-    } else {
-      await WalletSchema.findOneAndUpdate(
-        { userId: userId },
-        { totalAmount: findWallet.totalAmount - totalAmount }
-      );
-      await HistoryWalletSchema.findOneAndUpdate(
-        { _id: id },
-        { status: "done" }
-      );
-    }
-    return res.status(200).json({ message: "trả về thành công" });
-  } catch (error) {
-    return res.status(404).json({ error });
-  }
-};
-const updateWalletAdmin = async (req, res, next) => {
-  const { id } = req.params;
-  // const { userId } = req.params;
-  const status = req.body.status;
-  try {
-    const checkHistory = await HistoryWalletSchema.findOne({ _id: id });
-
-    if (!checkHistory || checkHistory.status === "done") {
-      return res.status(200).json({ message: "bạn đã bấm xác nhận" });
-    }
-    // console.log(history)
-    const findWallet = await WalletSchema.findOne({
-      userId: checkHistory.userId,
-    });
-    const userId = checkHistory.userId;
-    const totalAmount = checkHistory.totalAmount;
-    console.log(checkHistory);
-    if (checkHistory.status === "pde") {
       const data = await WalletSchema.findOneAndUpdate(
         { userId: checkHistory.userId },
         { totalAmount: findWallet.totalAmount + totalAmount }
@@ -524,7 +479,7 @@ const getHistoryAddPointUser = async (req, res) => {
 
   try {
     if (userId) {
-      const history = await HistoryAddPointSchema.find({userId}).sort({ createdAt: -1 });
+      const history = await HistoryAddPointSchema.find({ userId }).sort({ createdAt: -1 });
 
       if (history) {
         return res.status(200).json(history);
@@ -564,6 +519,40 @@ const historywithdrawWalletAdmin = async (req, res) => {
   }
 };
 
+const updateWalletAdmin = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const checkHistory = await HistoryWalletSchema.findById(id);
+
+    if (!checkHistory) {
+      return res.status(404).json({ message: "Không tìm thấy lịch sử ví" });
+    }
+console.log(checkHistory.userId)
+    if (checkHistory.status === "done") {
+      return res.status(200).json({ message: "Bạn đã bấm xác nhận" });
+    } else if (checkHistory.status === "false") {
+      return res.status(200).json({ message: "Bạn đã bấm từ chối" });
+    }
+    if (checkHistory.status === "pending") {
+      await HistoryWalletSchema.findByIdAndUpdate(id, { status: status });
+    }
+    
+    if(status==="false"){
+      const findWL = await WalletSchema.findOne({userId: checkHistory.userId});
+      const a = findWL.totalAmount
+      console.log(a)
+      await WalletSchema.findOneAndUpdate({userId: checkHistory.userId}, {totalAmount: a+ checkHistory.totalAmount})
+    }
+   
+
+    // Cập nhật ví tại đây nếu cần
+
+    return res.status(200).json({ message: "Xác nhận thành công" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   updateWalletAdmin,
