@@ -14,13 +14,13 @@ router.get(
 );
 router.get(
   "/admin-all-history",
-  // verifyToken,
+  verifyToken,
   // authAdmin,
   walletController.historywithdrawWalletAdmin
 );
 router.patch(
   "/update-all-history/:id",
-  // verifyToken,
+  verifyToken,
   // authAdmin,
   walletController.updateWalletAdmin
 );

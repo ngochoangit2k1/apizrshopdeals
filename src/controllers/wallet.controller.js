@@ -521,7 +521,7 @@ const historywithdrawWalletAdmin = async (req, res) => {
 
 const updateWalletAdmin = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { status } = req.body;
     const checkHistory = await HistoryWalletSchema.findById(id);
 
