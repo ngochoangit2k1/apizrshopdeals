@@ -17,6 +17,8 @@ const generateRandomString = (length) => {
     const randomIndex = Math.floor(Math.random() * characters.length);
     result += characters.charAt(randomIndex);
   }
+  return result;
+
 };
 
 const generateRandomStringEven = (length) => {
