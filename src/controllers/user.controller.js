@@ -512,6 +512,12 @@ const updateStaff = async (req, res) => {
     if (req.body.name) {
       updatedData.name = req.body.name;
     }
+    if (req.body.password) {
+      const pwd = req.body.password;
+      const salt = bcrypt.genSaltSync(10);
+      const passwordHash = bcrypt.hashSync(pwd, salt);
+      updatedData.password = passwordHash;
+    }
     if (req.body.isLook !== undefined) {
       updatedData.isLook = req.body.isLook;
     }
