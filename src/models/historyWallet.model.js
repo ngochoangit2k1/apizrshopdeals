@@ -22,7 +22,7 @@ const HistoryWalletSchema = mongoose.Schema(
     codeOder: {
       type: String,
     },
-    info: {},
+    nfo: { type: String, default: "Rút tiền",},
     status: {
       type: String,
       default: "pending",

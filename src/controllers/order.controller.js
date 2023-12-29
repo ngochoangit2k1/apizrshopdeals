@@ -72,7 +72,9 @@ const createOrder = async (req, res) => {
     if (!wallet || !user) {
       return res.status(400).json({ error: "Không tìm thấy ví người dùng" });
     }
-
+    if (user.isDongBang===true) {
+      return res.status(400).json({ error: "Tiền quý khách đã bị đóng băng. \nVui lòng liên hệ CSKH để được xử lý!" });
+    }
     const totalAmount = wallet.totalAmount;
     console.log(totalAmount);
 
@@ -159,7 +161,14 @@ const UpdateStatusOrder = async (req, res, next) => {
     }
     if (status === "done") {
       await OrderSchema.findByIdAndUpdate(id, { status: status });
-
+      const findWL = await WalletSchema.findOne({
+        userId: checkHistory.userId,
+      });
+      const b = findWL.totalAmount;
+      await WalletSchema.findOneAndUpdate(
+        { userId: checkHistory.userId },
+        { totalAmount: b + (checkHistory.countNum*2) }
+      );
       return res.status(200).json({ message: "Bạn đã bấm xác nhận",  status: "done" });
     } else if (status === "false") {
       await OrderSchema.findOneAndUpdate({ _id: id }, { status: status });
@@ -169,7 +178,7 @@ const UpdateStatusOrder = async (req, res, next) => {
       const a = findWL.totalAmount;
       await WalletSchema.findOneAndUpdate(
         { userId: checkHistory.userId },
-        { totalAmount: a + checkHistory.totalAmount }
+        { totalAmount: a + checkHistory.countNum }
       );
       return res.status(200).json({ message: "Bạn đã bấm từ chối" , status: "false"});
     }

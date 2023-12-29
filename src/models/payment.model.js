@@ -17,6 +17,10 @@ const PaymentSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    look:{
+      type: String,
+      default: "none",
+    }
   },
   { timestamps: true }
 );

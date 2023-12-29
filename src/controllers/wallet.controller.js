@@ -194,9 +194,26 @@ const withdrawMoneyToWallet = async (req, res) => {
   try {
     const userId = req.user.id;
     const findWallet = await WalletSchema.findOne({ userId: userId });
+    const user = await UserSchema.findOne({ _id: userId });
+    const Payment = await PaymentSchema.findOne({ userId: userId });
+    if (user.isDongBang===true) {
+      return res.status(400).json({ error: "Tiền quý khách đã bị đóng băng. \nVui lòng liên hệ CSKH để được xử lý!" });
+    }
     const a = findWallet.totalAmount
     if (a < totalAmount) {
-      return res.status(400).json({ error: "Bạn ko đủ điểm để rút" });
+      return res.status(400).json({ error: "Bạn ko đủ tiền để rút" });
+    }
+    if (!Payment) {
+      return res.status(400).json({ error: "Bạn chưa thêm tài khoản ngân hàng." });
+    }
+    if (!Payment.bankName) {
+      return res.status(400).json({ error: "Bạn chưa thêm tên ngân hàng. \nVui lòng liên hệ CSKH để được xử lý!" });
+    }
+    if (!Payment.nameUserBank) {
+      return res.status(400).json({ error: "Bạn chưa thêm tên tài khoản ngân hàng. \nVui lòng liên hệ CSKH để được xử lý!" });
+    }
+    if (!Payment.accountNumber) {
+      return res.status(400).json({ error: "Bạn chưa thêm số tài khoản ngân hàng. \nVui lòng liên hệ CSKH để được xử lý!" });
     }
     if (findWallet) {
       console.log(userId);
@@ -206,7 +223,7 @@ const withdrawMoneyToWallet = async (req, res) => {
       await historywithdrawWallet(userId, totalAmount, codeOder);
       return res.status(200).json("đang chờ xác nhận rút tiền");
     } else {
-      return res.status(400).json({ message: "ban chưa tạo ví" });
+      return res.status(400).json({ error: "ban chưa tạo ví" });
     }
   } catch (error) {
     return res.status(400).json({ message: error });

@@ -6,8 +6,8 @@ const HistoryAddPointSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    idUser:{
-        type: String,
+    idUser: {
+      type: String,
     },
     nameUser: {
       type: String,
@@ -16,6 +16,7 @@ const HistoryAddPointSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    info: { type: String, default: "Nạp tiền",},
     status: {
       type: String,
       default: "pending",

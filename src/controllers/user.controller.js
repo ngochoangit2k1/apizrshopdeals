@@ -203,6 +203,12 @@ const login = async (req, res) => {
         errMessage: "Tài khoản không tồn tại!",
       });
     }
+    if (user.isLook===true) {
+      return res.status(400).send({
+        ok: false,
+        errMessage: "Tài khoản đã bị khoá!",
+      });
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -492,35 +498,45 @@ const getUserWithMail = async (req, res) => {
 
 const updateStaff = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const {userId} = req.params;
+    const user = await UserSchema.findById({_id: userId});
+
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        errMessage: "Người dùng không tồn tại",
+      });
+    }
+
     const updatedData = {};
     if (req.body.name) {
       updatedData.name = req.body.name;
     }
+    if (req.body.isLook !== undefined) {
+      updatedData.isLook = req.body.isLook;
+    }
+    if (req.body.isDongBang !== undefined) {
+      updatedData.isDongBang = req.body.isDongBang;
+    }
     if (req.files && req.files[0] && req.files[0].path) {
       updatedData.avatar = req.files[0].path;
     }
-    if (Object.keys(updatedData).length === 0) {
-      return res.status(400).json({
-        ok: false,
-        errMessage: "Không có dữ liệu để cập nhật.",
-      });
-    }
-    const user = await UserSchema.findByIdAndUpdate(userId, updatedData, {
+
+    const updatedUser = await UserSchema.findByIdAndUpdate({_id: userId}, updatedData, {
       new: true,
     });
-    await user.save();
-    user.password = undefined;
+
     return res.status(201).json({
       ok: true,
       message: "Cập nhật thành công!",
-      user: user,
+      user: updatedUser,
     });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: err.message });
   }
 };
+
 
 const createUser = async (req, res) => {
   // const images_url = req.files.map((image) => image.path);

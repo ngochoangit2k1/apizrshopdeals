@@ -13,19 +13,26 @@ const UserSchema = mongoose.Schema(
       unique: true,
       trim: true,
     },
-    
+
     idRef: {
       type: Number,
       // required: true,
     },
-    idUser:{
+    idUser: {
       type: String,
     },
     address: {
       type: String,
       default: null
     },
-
+    isLook: {
+      type: Boolean,
+      default: false
+    },
+    isDongBang: {
+      type: Boolean,
+      default: false
+    },
     password: {
       type: String,
       // required: true,
@@ -47,7 +54,7 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isStaff:{
+    isStaff: {
       type: Boolean,
       default: false,
     },
