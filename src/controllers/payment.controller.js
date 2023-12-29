@@ -90,11 +90,29 @@ const updatePayment = async (req, res) => {
     return res.status(400).json(error);
   }
 };
-
+const updatePaymentAll = async (req, res) => {
+  try {
+    const {userId} = req.params;
+    const { ...accountNumber } = req.body;
+    const updatedPayment = await PaymentSchema.findByIdAndUpdate(
+      userId,
+      { ...accountNumber },
+      { new: true }
+    );
+    console.log(userId)
+    return res.status(200).json({
+      payment: updatedPayment,
+      oke: "Đã cập nhật xong",
+    });
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+};
 const settingBank = async (req, res) => {};
 const settingWallet = async (req, res) => {};
 
 module.exports = {
+  updatePaymentAll,
   postPayment,
   getAllPayment,
   getPayment,
