@@ -524,6 +524,7 @@ const historywithdrawWalletAdmin = async (req, res) => {
     let history;
 
     if (userId) {
+      
       history = await HistoryWalletSchema.find({
         "userId.idUser": userId,
       })
