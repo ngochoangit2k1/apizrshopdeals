@@ -15,10 +15,25 @@ router.get("/create-product-code", codeRandomController.createProductCode);
 router.get("/get-product-code", codeRandomController.getProductCode);
 router.get("/get-product-new-code", codeRandomController.getNewProductCode);
 
-router.get("/get-random", codeRandomController.generateRandomStrings)
+router.get("/get-random", codeRandomController.generateRandomStrings);
 
-router.patch('/setting-random-product', codeRandomController.updateConfigRandomProduct)
-router.patch('/setting-random-faction', codeRandomController.updateConfigRandomFaction)
+router.patch(
+  "/setting-random-product",
+  codeRandomController.updateConfigRandomProduct
+);
+router.get(
+  "/get-setting-random-product",
+  codeRandomController.getConfigRandomProduct
+);
+
+router.patch( 
+  "/setting-random-faction",
+  codeRandomController.updateConfigRandomFaction
+);
+router.get(
+  "/get-setting-random-faction",
+  codeRandomController.getConfigRandomFaction
+);
 
 // router.post("/create", randomController.createRandomOrder);
 // router.patch("/update/:orderId", upload.Image('image'), orderController.updateOrder);
