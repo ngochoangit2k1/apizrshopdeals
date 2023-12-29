@@ -1,5 +1,6 @@
 const WalletSchema = require("../models/wallet.model");
 const ConfigTransitiontSchema = require("../models/configTransition.model");
+const moneyConfigSchema = require("../models/settingMoneyWithdraw.model")
 const HistoryWalletSchema = require("../models/historyWallet.model");
 const UserSchema = require("../models/user.model");
 const ProductSchema = require("../models/product.model");
@@ -198,12 +199,16 @@ const withdrawMoneyToWallet = async (req, res) => {
     const findWallet = await WalletSchema.findOne({ userId: userId });
     const user = await UserSchema.findOne({ _id: userId });
     const Payment = await PaymentSchema.findOne({ userId: userId });
+    const moneyMin = await moneyConfigSchema.findOne();
     if (user.isDongBang===true) {
       return res.status(400).json({ error: "Tiền quý khách đã bị đóng băng. \nVui lòng liên hệ CSKH để được xử lý!" });
     }
     const a = findWallet.totalAmount
     if (a < totalAmount) {
       return res.status(400).json({ error: "Bạn ko đủ tiền để rút" });
+    }
+    if (totalAmount < moneyMin.number) {
+      return res.status(400).json({ error: `Bạn vui lòng rút tiền lớn hơn tiền tối thiểu là ${moneyMin.number}₫` });
     }
     if (!Payment) {
       return res.status(400).json({ error: "Bạn chưa thêm tài khoản ngân hàng." });

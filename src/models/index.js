@@ -6,6 +6,7 @@ const PaymentSchema = require('./payment.model');
 const OrderSchema = require('./order.model');
 const ConfigTransitiontSchema = require('./configTransition.model')
 const WalletSchema = require('./wallet.model');
+const moneyConfigSchema = require("./settingMoneyWithdraw.model")
 const HistoryWalletSchema = require('./historyWallet.model')
 const PaymentAdminSchema = require('./paymentAdmin.model')
 const CTRL = {
@@ -18,6 +19,7 @@ const CTRL = {
   ConfigTransitiontSchema,
   WalletSchema,
   HistoryWalletSchema,
+  moneyConfigSchema,
   PaymentAdminSchema
 };
 module.exports = CTRL;

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const moneyConfigSchema = mongoose.Schema({
     number: {
         type: String,
-        default: '1'
+        default: '0'
     },
 },
   { timestamps: true }
