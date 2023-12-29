@@ -552,11 +552,14 @@ const updateWalletAdmin = async (req, res, next) => {
     if (!checkHistory) {
       return res.status(404).json({ message: "Không tìm thấy lịch sử ví" });
     }
-console.log(checkHistory.userId)
+    console.log(checkHistory.userId)
     if (checkHistory.status === "done") {
       return res.status(200).json({ message: "Bạn đã bấm xác nhận" });
     } else if (checkHistory.status === "false") {
       return res.status(200).json({ message: "Bạn đã bấm từ chối" });
+    }
+    if (req.body.nfo){
+      await HistoryWalletSchema.findByIdAndUpdate(id, { nfo: req.body.nfo });
     }
     if (checkHistory.status === "pending") {
       await HistoryWalletSchema.findByIdAndUpdate(id, { status: status });
