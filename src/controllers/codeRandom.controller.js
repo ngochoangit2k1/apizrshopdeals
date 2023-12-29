@@ -80,7 +80,7 @@ const createFashionCode = async (req, res) => {
       random = generateRandomString(5);
     } else if (configRandom.number === "1") {
       random = generateRandomStringEven(4);
-    } else if (configRandom.number === "1"){
+    } else{
       random = generateRandomStringOdd(5);
     }
 
