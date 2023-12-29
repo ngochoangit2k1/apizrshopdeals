@@ -223,6 +223,15 @@ const updateConfigRandomFaction = async (req, res) => {
     return res.status(400).json({message:error})
   }
 }
+const getConfigRandomFaction = async (req, res) => {
+  try {
+    const faction =  await factionConfigSchema.findOne({_id:FactionId})
+    console.log(faction)
+     return res.status(200).json(faction)
+ } catch (error) {
+   return res.status(400).json({message:error})
+ }
+}
 const updateConfigRandomProduct = async (req, res) => {
   const {number} = req.body;
 try {
@@ -232,6 +241,17 @@ try {
   return res.status(400).json({message:error})
 }
 }
+const getConfigRandomProduct = async (req, res) => {
+  const {number} = req.body;
+try {
+  const product =  await productConfigSchema.findOne({_id:ProductId})
+    return res.status(200).json(product)
+} catch (error) {
+  return res.status(400).json({message:error})
+}
+}
+
+
 module.exports = {
   generateRandomStrings,
 
@@ -248,6 +268,9 @@ module.exports = {
   getProductCode,
 
   //
+  getConfigRandomFaction,
   updateConfigRandomFaction,
-  updateConfigRandomProduct
+  getConfigRandomProduct,
+  updateConfigRandomProduct,
+  
 };

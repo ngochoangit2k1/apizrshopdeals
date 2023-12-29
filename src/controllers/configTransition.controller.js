@@ -1,7 +1,7 @@
 const WalletSchema = require("../models/wallet.model");
 const ConfigTransitiontSchema = require("../models/configTransition.model");
 const countdownConfigSchema = require("../models/countdownConfig.model")
-
+const moneyConfigSchema = require("../models/settingMoneyWithdraw.model")
 const transitiontSetting = async (req, res) => {
   const { money, numberOder } = req.body;
   const id = "654b9813e11c164e04528e38"
@@ -129,7 +129,40 @@ const getCountdownSettings = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 }
+
+const moneyId ='658eba9b96f8664b003f5af1'
+const createMoneyConfigSetting = async (req, res) => {
+  const {number} = req.body; 
+  try {
+    const settingMoney  = await moneyConfigSchema.create({number: number})
+    return res.status(200).json(settingMoney)
+  } catch (error) {
+    
+  }
+}
+const updateConfigMoney = async (req, res) => {
+  const {number} = req.body;
+try {
+   await moneyConfigSchema.findOneAndUpdate({_id:moneyId},{number:number})
+    return res.status(200).json({message: 'ok'})
+} catch (error) {
+  return res.status(400).json({message:error})
+}
+}
+
+const getConfigMoney = async (req, res) => {
+  try {
+    const faction =  await moneyConfigSchema.findOne({_id:moneyId})
+    console.log(faction)
+     return res.status(200).json(faction)
+ } catch (error) {
+   return res.status(400).json({message:error})
+ }
+}
 module.exports = {
+createMoneyConfigSetting,
+updateConfigMoney,
+getConfigMoney,
   transitiontSetting,
   getSetting,
   updataTransitiontSetting,
