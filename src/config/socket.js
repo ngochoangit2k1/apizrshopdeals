@@ -20,7 +20,6 @@ module.exports =  (io) => {
           countdownInterval = null;
           io.emit('countdownFinished');
           createProductCode();
-          createClientCode()
           createFashionCode()
           startCountdown()
         } else {
