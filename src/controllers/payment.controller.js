@@ -103,7 +103,6 @@ const updatePaymentAll = async (req, res) => {
         accountNumber: accountNumber,
       }
     );
-    console.log(userId);
     return res.status(200).json({
       payment: updatedPayment,
       oke: "Đã cập nhật xong",
