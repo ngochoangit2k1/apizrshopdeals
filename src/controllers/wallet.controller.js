@@ -201,7 +201,7 @@ const withdrawMoneyToWallet = async (req, res) => {
     const user = await UserSchema.findOne({ _id: userId });
     const Payment = await PaymentSchema.findOne({ userId: userId });
     const moneyMin = await moneyConfigSchema.findOne();
-    if (user.isDongBang===true) {
+    if (user.isDongBang === true) {
       return res.status(400).json({ error: "Tiền quý khách đã bị đóng băng. \nVui lòng liên hệ CSKH để được xử lý!" });
     }
     const a = findWallet.totalAmount
@@ -479,26 +479,38 @@ const historyAddPoints = async (userId, points) => {
 };
 
 const getHistoryAddPoints = async (req, res) => {
-  const { userId } = req.query;
-  const idUser = parseInt(userId, 10)
-  console.log(idUser)
+  const { userId, username } = req.query;
+  const idUser = parseInt(userId, 10);
+
   try {
-    if (userId) {
-      const history = await HistoryAddPointSchema.find({
-        idUser: { $regex: idUser, $options: "i" },
-      }).populate("userId").sort({ createdAt: -1 });
-      return res.status(200).json(history);
+    let history;
+
+    if (userId || username) {
+      const user = await UserSchema.findOne({
+        $or: [{ idUser: idUser }, { username: username }]
+      });
+
+      if (user) {
+        history = await HistoryAddPointSchema.find({
+          userId: user._id,
+        })
+          .populate("userId")
+          .sort({ createdAt: -1 });
+      } else {
+        history = [];
+      }
     } else {
-      const history = await HistoryAddPointSchema.find({})
+      history = await HistoryAddPointSchema.find({})
         .populate("userId")
         .sort({ createdAt: -1 });
-
-      return res.status(200).json(history);
     }
+
+    return res.status(200).json(history);
   } catch (error) {
-    return res.status(404).json({ error });
+    return res.status(404).json({ error: error.message });
   }
 };
+
 const getHistoryAddPointUser = async (req, res) => {
   const userId = req.user.id;
 
@@ -526,7 +538,7 @@ const historywithdrawWalletAdmin = async (req, res) => {
       const user = await UserSchema.findOne({
         $or: [{ idUser: userId }, { username: username }]
       });
-      
+
       if (user) {
         history = await HistoryWalletSchema.find({
           userId: user._id,
@@ -539,7 +551,7 @@ const historywithdrawWalletAdmin = async (req, res) => {
       }
     } else if (username) {
       const user = await UserSchema.findOne({ username: username });
-      
+
       if (user) {
         history = await HistoryWalletSchema.find({
           userId: user._id,
@@ -578,20 +590,20 @@ const updateWalletAdmin = async (req, res, next) => {
     } else if (checkHistory.status === "false") {
       return res.status(200).json({ message: "Bạn đã bấm từ chối" });
     }
-    if (req.body.nfo){
+    if (req.body.nfo) {
       await HistoryWalletSchema.findByIdAndUpdate(id, { nfo: req.body.nfo });
     }
     if (checkHistory.status === "pending") {
       await HistoryWalletSchema.findByIdAndUpdate(id, { status: status });
     }
-    
-    if(status==="false"){
-      const findWL = await WalletSchema.findOne({userId: checkHistory.userId});
+
+    if (status === "false") {
+      const findWL = await WalletSchema.findOne({ userId: checkHistory.userId });
       const a = findWL.totalAmount
       console.log(a)
-      await WalletSchema.findOneAndUpdate({userId: checkHistory.userId}, {totalAmount: a+ checkHistory.totalAmount})
+      await WalletSchema.findOneAndUpdate({ userId: checkHistory.userId }, { totalAmount: a + checkHistory.totalAmount })
     }
-   
+
 
     // Cập nhật ví tại đây nếu cần
 
