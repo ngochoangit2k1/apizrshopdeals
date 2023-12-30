@@ -591,7 +591,7 @@ const createUser = async (req, res) => {
 const updateRoleStaff = async (req, res) => {
   try {
     const { id } = req.query;
-    const { isAdmin, isStaff } = req.body;
+    const { isAdmin } = req.body;
   
     const staffUpdate = await UserSchema.findOneAndUpdate(
       {
@@ -599,7 +599,6 @@ const updateRoleStaff = async (req, res) => {
       },
       {
         isAdmin: isAdmin,
-        isStaff: isStaff,
       }
     );
     return res.status(200).json({ status: ok, message: staffUpdate });
@@ -607,6 +606,7 @@ const updateRoleStaff = async (req, res) => {
     return res.status(500).json({ status: error})
   }
 };
+
 module.exports = {
   register,
   login,
