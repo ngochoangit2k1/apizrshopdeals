@@ -165,6 +165,7 @@ const historywithdrawWallet = async (userId, totalAmount, codeOder, next) => {
       nameUser: user.nameUser,
       inf: "withdraw money",
       codeOder: codeOder,
+      bankUserName: bank.banUserkName,
       bankName: bank.bankName,
       bankNumber: bank.accountNumber,
     });
