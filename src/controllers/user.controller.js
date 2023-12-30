@@ -126,17 +126,17 @@ const referralCode = async (req, res) => {
 
 const registerAdmin = async (req, res) => {
   try {
-    const { password, username } = req.body;
+    const { name, password, username } = req.body;
     if (!(username && password)) {
       return res.status(400).json({
         oke: false,
         errMessage: "Thiếu tên người dùng, mật khẩu!",
       });
     }
-    if (!validateEmail(username)) {
+    if (!username) {
       return res.status(400).json({
         oke: false,
-        errMessage: " Email không hợp lệ!",
+        errMessage: "Vui lòng nhập username!",
       });
     }
     const users = await UserSchema.findOne({ username });
@@ -144,7 +144,7 @@ const registerAdmin = async (req, res) => {
     if (users) {
       return res.status(400).json({
         oke: false,
-        errMessage: " Email đã được sử dụng!",
+        errMessage: " Username đã được sử dụng!",
       });
     }
     if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
@@ -168,6 +168,7 @@ const registerAdmin = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const passwordHash = bcrypt.hashSync(password, salt);
     const newUser = new UserSchema({
+      name: name,
       username: username,
       password: passwordHash,
       idUser: idUser,
