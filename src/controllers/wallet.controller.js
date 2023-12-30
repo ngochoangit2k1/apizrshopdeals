@@ -156,12 +156,12 @@ const historywithdrawWallet = async (userId, totalAmount, codeOder, next) => {
   try {
     const user = await UserSchema.findOne({ _id: userId });
     const bank = await PaymentSchema.findOne({ userId: userId });
-    const tiLe = await ConfigTransitiontSchema.findOne();
-    const sumTotalAmount = totalAmount - (totalAmount*(tiLe.numberOder/100));
+    // const tiLe = await ConfigTransitiontSchema.findOne();
+    // const sumTotalAmount = totalAmount - (totalAmount*(tiLe.numberOder/100));
     console.log(totalAmount)
     await HistoryWalletSchema.create({
       userId: userId,
-      totalAmount: sumTotalAmount,
+      totalAmount: totalAmount,
       nameUser: user.nameUser,
       inf: "withdraw money",
       codeOder: codeOder,
