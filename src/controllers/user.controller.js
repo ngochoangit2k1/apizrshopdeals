@@ -590,7 +590,7 @@ const createUser = async (req, res) => {
 
 const updateRoleStaff = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
     const { isAdmin, isStaff } = req.body;
   
     const staffUpdate = await UserSchema.findOneAndUpdate(
