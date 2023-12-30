@@ -1,13 +1,12 @@
 const ClientSchema = require("../models/client.model");
 const FashionSchema = require("../models/fashion.model");
-const numberSchema = require("../models/numberCount.model")
+const numberSchema = require("../models/numberCount.model");
 const ProductSchema = require("../models/product.model");
 const factionConfigSchema = require("../models/randomFashionConfig.model");
 const productConfigSchema = require("../models/randomProductConfig.model");
 
-
-const FactionId ='658e5993e6761d41d4e6170f'
-const ProductId = '658e5994e6761d41d4e61711'
+const FactionId = "658e5993e6761d41d4e6170f";
+const ProductId = "658e5994e6761d41d4e61711";
 
 const generateRandomString = (length) => {
   const characters = "0123456789";
@@ -18,7 +17,6 @@ const generateRandomString = (length) => {
     result += characters.charAt(randomIndex);
   }
   return result;
-
 };
 
 const generateRandomStringEven = (length) => {
@@ -75,8 +73,15 @@ const targetHour = 1;
 const targetMinutes = 29;
 const daysOfWeek = ["8", "2", "3", "4", "5", "6", "7"];
 const currentDayIndex = currentTime.getDay();
-const currentDay = daysOfWeek[currentDayIndex];
+let currentDay;
+currentDay = daysOfWeek[currentDayIndex];
 //Fashion
+if (
+  (currentHour === 1 && currentMinutes <= targetMinutes) ||
+  currentHour === 0
+) {
+  currentDay = daysOfWeek[currentDayIndex - 1];
+}
 
 const createFashionCode = async (req, res) => {
   try {
@@ -84,31 +89,34 @@ const createFashionCode = async (req, res) => {
       _id: FactionId,
     });
     let random;
-    if (configRandom.number === "0" ) {
+    if (configRandom.number === "0") {
       random = generateRandomString(5);
     } else if (configRandom.number === "1") {
       random = generateRandomStringEven(4);
-    } else{
+    } else {
       random = generateRandomStringOdd(5);
     }
-     
-    const getClientCode = await numberSchema.find()
+
+    const getClientCode = await numberSchema
+      .find()
       .sort({ createdAt: -1 })
       .limit(1);
-      console.log("getClientCode", getClientCode)
+    console.log("getClientCode", getClientCode);
 
     let code;
-    if( getClientCode.length === 0 || (currentHour === targetHour && currentMinutes >= targetMinutes)){
-      const createCode = await numberSchema.create({number:1})
-      code = createCode.number
-    }else{
-      const number =  getClientCode[0].number + 1
-      await numberSchema.create({number:number})
+    if (
+      getClientCode.length === 0 ||
+      (currentHour === targetHour && currentMinutes >= targetMinutes)
+    ) {
+      const createCode = await numberSchema.create({ number: 1 });
+      code = createCode.number;
+    } else {
+      const number = getClientCode[0].number + 1;
+      await numberSchema.create({ number: number });
 
-      code = getClientCode[0].number + 1
+      code = getClientCode[0].number + 1;
     }
-    const formattedDate =
-      day + month + year +currentDay+ code;
+    const formattedDate = day + month + year + currentDay + code;
     const clientCode = await FashionSchema.create({
       randomNumber: random,
       fashionPlus: formattedDate,
@@ -155,27 +163,29 @@ const createProductCode = async (req, res) => {
     } else {
       random = generateRandomStringOdd(5);
     }
-    const getClientCode = await numberSchema.find()
+    const getClientCode = await numberSchema
+      .find()
       .sort({ createdAt: -1 })
       .limit(1);
 
     let code;
-    if(getClientCode.length === 0  || (currentHour === targetHour && currentMinutes >= targetMinutes)){
-      const createCode = await numberSchema.create()
-      code = createCode.number
-    }else{
-      
-      code = getClientCode[0].number + 1
+    if (
+      getClientCode.length === 0 ||
+      (currentHour === targetHour && currentMinutes >= targetMinutes)
+    ) {
+      const createCode = await numberSchema.create();
+      code = createCode.number;
+    } else {
+      code = getClientCode[0].number + 1;
     }
-    const formattedDate =   
-      day + month + year + currentDay+code;
+    const formattedDate = day + month + year + currentDay + code;
     const clientCode = await ProductSchema.create({
       randomNumber: random,
       productCodePlus: formattedDate,
     });
     console.log(clientCode);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 const getProductCode = async (req, res) => {
@@ -215,7 +225,7 @@ const createClientCode = async (req, res) => {
       clientCodePlus: formattedDate,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -242,42 +252,47 @@ const getNewClientCode = async (req, res) => {
 };
 
 const updateConfigRandomFaction = async (req, res) => {
-    const {number} = req.body;
+  const { number } = req.body;
   try {
-     await factionConfigSchema.findOneAndUpdate({_id:FactionId},{number:number})
-      return res.status(200).json({message: 'ok'})
+    await factionConfigSchema.findOneAndUpdate(
+      { _id: FactionId },
+      { number: number }
+    );
+    return res.status(200).json({ message: "ok" });
   } catch (error) {
-    return res.status(400).json({message:error})
+    return res.status(400).json({ message: error });
   }
-}
+};
 const getConfigRandomFaction = async (req, res) => {
   try {
-    const faction =  await factionConfigSchema.findOne({_id:FactionId})
-    console.log(faction)
-     return res.status(200).json(faction)
- } catch (error) {
-   return res.status(400).json({message:error})
- }
-}
+    const faction = await factionConfigSchema.findOne({ _id: FactionId });
+    console.log(faction);
+    return res.status(200).json(faction);
+  } catch (error) {
+    return res.status(400).json({ message: error });
+  }
+};
 const updateConfigRandomProduct = async (req, res) => {
-  const {number} = req.body;
-try {
-   await productConfigSchema.findOneAndUpdate({_id:ProductId},{number:number})
-    return res.status(200).json({message: 'ok'})
-} catch (error) {
-  return res.status(400).json({message:error})
-}
-}
+  const { number } = req.body;
+  try {
+    await productConfigSchema.findOneAndUpdate(
+      { _id: ProductId },
+      { number: number }
+    );
+    return res.status(200).json({ message: "ok" });
+  } catch (error) {
+    return res.status(400).json({ message: error });
+  }
+};
 const getConfigRandomProduct = async (req, res) => {
-  const {number} = req.body;
-try {
-  const product =  await productConfigSchema.findOne({_id:ProductId})
-    return res.status(200).json(product)
-} catch (error) {
-  return res.status(400).json({message:error})
-}
-}
-
+  const { number } = req.body;
+  try {
+    const product = await productConfigSchema.findOne({ _id: ProductId });
+    return res.status(200).json(product);
+  } catch (error) {
+    return res.status(400).json({ message: error });
+  }
+};
 
 module.exports = {
   generateRandomStrings,
@@ -299,5 +314,4 @@ module.exports = {
   updateConfigRandomFaction,
   getConfigRandomProduct,
   updateConfigRandomProduct,
-  
 };

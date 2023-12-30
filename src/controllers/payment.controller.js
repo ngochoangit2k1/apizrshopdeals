@@ -74,7 +74,7 @@ const deletePayment = async (req, res) => {
 
 const updatePayment = async (req, res) => {
   try {
-    const paymentId = req.query._id;
+    const {paymentId} = req.query;
     const { ...accountNumber } = req.body;
     const updatedPayment = await PaymentSchema.findOneAndUpdate(
       {_id:paymentId},
