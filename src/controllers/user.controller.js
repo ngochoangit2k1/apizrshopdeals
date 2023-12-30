@@ -29,7 +29,7 @@ const register = async (req, res) => {
       });
     }
 
-    const checkId = await UserSchema.findOne({ idUser: idRef })
+    const checkId = await UserSchema.findOne({ idUser: idRef });
     if (!checkId) {
       return res.status(400).json({
         oke: false,
@@ -65,7 +65,6 @@ const register = async (req, res) => {
       idUser = generateRandomString(5);
       checkIdUser = await UserSchema.findOne({ idUser });
     } while (checkIdUser);
-
 
     const newUser = new UserSchema({
       idRef: idRef,
@@ -203,7 +202,7 @@ const login = async (req, res) => {
         errMessage: "Tài khoản không tồn tại!",
       });
     }
-    if (user.isLook===true) {
+    if (user.isLook === true) {
       return res.status(400).send({
         ok: false,
         errMessage: "Tài khoản đã bị khoá!",
@@ -323,19 +322,28 @@ const getAllUser = async (req, res) => {
     // Merging thông tin PaymentSchema vào mỗi user
     const usersWithPaymentInfo = users.map((user) => {
       const userPaymentInfo = paymentInfo.find(
-        (info) => info.userId && user._id && info.userId.toString() === user._id.toString()
+        (info) =>
+          info.userId &&
+          user._id &&
+          info.userId.toString() === user._id.toString()
       );
-    
+
       const userWalletInfo = getWallet.filter(
-        (info) => info.userId && user._id && info.userId.toString() === user._id.toString()
+        (info) =>
+          info.userId &&
+          user._id &&
+          info.userId.toString() === user._id.toString()
       );
-    
+
       return {
         ...user.toObject(),
         bankName: userPaymentInfo ? userPaymentInfo.bankName : null,
         banKNumber: userPaymentInfo ? userPaymentInfo.accountNumber : null,
         nameUserBank: userPaymentInfo ? userPaymentInfo.nameUserBank : null,
-        walletBalance: userWalletInfo.length > 0 ? userWalletInfo.map(w => w.totalAmount) : null,
+        walletBalance:
+          userWalletInfo.length > 0
+            ? userWalletInfo.map((w) => w.totalAmount)
+            : null,
       };
     });
 
@@ -360,7 +368,7 @@ const searchStaff = async (req, res) => {
   try {
     const { name, username, idUser } = req.query;
     let query = {};
-    
+
     if (name && username && idUser) {
       query = {
         $and: [
@@ -402,7 +410,7 @@ const searchStaff = async (req, res) => {
 const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
-    const checkUser = await UserSchema.findOne({ _id: userId })
+    const checkUser = await UserSchema.findOne({ _id: userId });
     if (checkUser.isAdmin === true) {
       return res.status(400).json({
         ok: false,
@@ -499,8 +507,8 @@ const getUserWithMail = async (req, res) => {
 
 const updateStaff = async (req, res) => {
   try {
-    const {userId} = req.params;
-    const user = await UserSchema.findById({_id: userId});
+    const { userId } = req.params;
+    const user = await UserSchema.findById({ _id: userId });
 
     if (!user) {
       return res.status(404).json({
@@ -529,9 +537,13 @@ const updateStaff = async (req, res) => {
       updatedData.avatar = req.files[0].path;
     }
 
-    const updatedUser = await UserSchema.findByIdAndUpdate({_id: userId}, updatedData, {
-      new: true,
-    });
+    const updatedUser = await UserSchema.findByIdAndUpdate(
+      { _id: userId },
+      updatedData,
+      {
+        new: true,
+      }
+    );
 
     return res.status(201).json({
       ok: true,
@@ -543,7 +555,6 @@ const updateStaff = async (req, res) => {
     return res.status(500).json({ msg: err.message });
   }
 };
-
 
 const createUser = async (req, res) => {
   // const images_url = req.files.map((image) => image.path);
@@ -577,6 +588,25 @@ const createUser = async (req, res) => {
   });
 };
 
+const updateRoleStaff = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const { isAdmin } = req.body;
+  
+    const staffUpdate = await UserSchema.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        isAdmin: isAdmin,
+      }
+    );
+    return res.status(200).json({ status: ok, message: staffUpdate });
+  } catch (error) {
+    return res.status(500).json({ status: error})
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -585,6 +615,7 @@ module.exports = {
   getAllUser,
   getUserWithMail,
   updateProfile,
+  updateRoleStaff,
   // updateUser,
   updateStaff,
   createUser,
