@@ -598,6 +598,15 @@ const updateRoleStaff = async (req, res) => {
     if (req.body.isStaff) {
       updatedData.isStaff = req.body.isStaff;
     }
+    if (req.body.name) {
+      updatedData.name = req.body.name;
+    }
+    if (req.body.password) {
+      const pwd = req.body.password;
+      const salt = bcrypt.genSaltSync(10);
+      const passwordHash = bcrypt.hashSync(pwd, salt);
+      updatedData.password = passwordHash;
+    }
     const staffUpdate = await UserSchema.findOneAndUpdate(
       {
         _id: id,
