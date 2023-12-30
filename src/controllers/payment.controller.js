@@ -10,7 +10,7 @@ const postPayment = async (req, res, next) => {
         bankName,
         accountNumber,
         userId,
-        nameUserBank
+        nameUserBank,
       });
       return res.status(200).json(createPayment);
     } else {
@@ -74,14 +74,14 @@ const deletePayment = async (req, res) => {
 
 const updatePayment = async (req, res) => {
   try {
-    const {paymentId} = req.query;
+    const { paymentId } = req.query;
     const { ...accountNumber } = req.body;
     const updatedPayment = await PaymentSchema.findOneAndUpdate(
-      {_id:paymentId},
+      { _id: paymentId },
       { ...accountNumber },
       { new: true }
     );
-    console.log(paymentId)
+    console.log(paymentId);
     return res.status(200).json({
       payment: updatedPayment,
       oke: "Đã cập nhật xong",
@@ -92,14 +92,18 @@ const updatePayment = async (req, res) => {
 };
 const updatePaymentAll = async (req, res) => {
   try {
-    const {userId} = req.params;
-    const { ...accountNumber } = req.body;
+    const { userId } = req.params;
+    console.log(userId);
+    const { bankName, nameUserBank, accountNumber } = req.body;
     const updatedPayment = await PaymentSchema.findOneAndUpdate(
-      userId,
-      { ...accountNumber },
-      { new: true }
+      { userId: userId },
+      {
+        bankName: bankName,
+        nameUserBank: nameUserBank,
+        accountNumber: accountNumber,
+      }
     );
-    console.log(userId)
+    console.log(userId);
     return res.status(200).json({
       payment: updatedPayment,
       oke: "Đã cập nhật xong",
