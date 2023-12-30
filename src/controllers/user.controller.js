@@ -334,6 +334,7 @@ const getAllUser = async (req, res) => {
         ...user.toObject(),
         bankName: userPaymentInfo ? userPaymentInfo.bankName : null,
         banKNumber: userPaymentInfo ? userPaymentInfo.accountNumber : null,
+        nameUserBank: userPaymentInfo ? userPaymentInfo.nameUserBank : null,
         walletBalance: userWalletInfo.length > 0 ? userWalletInfo.map(w => w.totalAmount) : null,
       };
     });
