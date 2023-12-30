@@ -519,11 +519,27 @@ const getHistoryAddPointUser = async (req, res) => {
   }
 };
 const historywithdrawWalletAdmin = async (req, res) => {
-  const { userId } = req.query;
+  const { userId, username } = req.query;
   try {
     let history;
     if (userId) {
-      const user = await UserSchema.findOne({ idUser: userId });
+      const user = await UserSchema.findOne({
+        $or: [{ idUser: userId }, { username: username }]
+      });
+      
+      if (user) {
+        history = await HistoryWalletSchema.find({
+          userId: user._id,
+        })
+          .populate("userId")
+          .sort({ createdAt: -1 })
+          .limit(30);
+      } else {
+        history = [];
+      }
+    } else if (username) {
+      const user = await UserSchema.findOne({ username: username });
+      
       if (user) {
         history = await HistoryWalletSchema.find({
           userId: user._id,
