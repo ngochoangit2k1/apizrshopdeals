@@ -591,16 +591,23 @@ const createUser = async (req, res) => {
 const updateRoleStaff = async (req, res) => {
   try {
     const { id } = req.query;
-    const { isAdmin } = req.body;
-  
+    const updatedData = {};
+    if (req.body.isAdmin) {
+      updatedData.isAdmin = req.body.isAdmin;
+    }
+    if (req.body.isStaff) {
+      updatedData.isStaff = req.body.isStaff;
+    }
     const staffUpdate = await UserSchema.findOneAndUpdate(
       {
         _id: id,
       },
+      updatedData,
       {
-        isAdmin: isAdmin,
+        new: true,
       }
     );
+
     return res.status(200).json({ status: ok, message: staffUpdate });
   } catch (error) {
     return res.status(500).json({ status: error})
