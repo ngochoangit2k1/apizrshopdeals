@@ -1,6 +1,6 @@
 const ClientSchema = require("../models/client.model");
 const FashionSchema = require("../models/fashion.model");
-
+const numberSchema = require("../models/numberCount.model")
 const ProductSchema = require("../models/product.model");
 const factionConfigSchema = require("../models/randomFashionConfig.model");
 const productConfigSchema = require("../models/randomProductConfig.model");
@@ -67,7 +67,15 @@ const generateRandomStrings = async (req, res) => {
 const currentTime = new Date();
 const day = currentTime.getDate().toString().padStart(2, "0");
 const month = (currentTime.getMonth() + 1).toString().padStart(2, "0"); // Lưu ý: Tháng trong JavaScript bắt đầu từ 0
-const year = currentTime.getFullYear().toString();
+const years = currentTime.getFullYear().toString();
+const year = years.slice(2);
+const currentHour = currentTime.getHours();
+const currentMinutes = currentTime.getMinutes();
+const targetHour = 1;
+const targetMinutes = 29;
+const daysOfWeek = ["8", "2", "3", "4", "5", "6", "7"];
+const currentDayIndex = currentTime.getDay();
+const currentDay = daysOfWeek[currentDayIndex];
 //Fashion
 
 const createFashionCode = async (req, res) => {
@@ -76,21 +84,31 @@ const createFashionCode = async (req, res) => {
       _id: FactionId,
     });
     let random;
-    if (configRandom.number === "0") {
+    if (configRandom.number === "0" ) {
       random = generateRandomString(5);
     } else if (configRandom.number === "1") {
       random = generateRandomStringEven(4);
     } else{
       random = generateRandomStringOdd(5);
     }
-
-    const getClientCode = await FashionSchema.find()
+     
+    const getClientCode = await numberSchema.find()
       .sort({ createdAt: -1 })
       .limit(1);
-    console.log(getClientCode[0].fashionCode);
+      console.log("getClientCode", getClientCode)
+
+    let code;
+    if( getClientCode.length === 0 || (currentHour === targetHour && currentMinutes >= targetMinutes)){
+      const createCode = await numberSchema.create({number:1})
+      code = createCode.number
+    }else{
+      const number =  getClientCode[0].number + 1
+      await numberSchema.create({number:number})
+
+      code = getClientCode[0].number + 1
+    }
     const formattedDate =
-      day + month + year + (getClientCode[0].fashionCode + 1);
-    console.log(formattedDate);
+      day + month + year +currentDay+ code;
     const clientCode = await FashionSchema.create({
       randomNumber: random,
       fashionPlus: formattedDate,
@@ -129,7 +147,6 @@ const createProductCode = async (req, res) => {
     const configRandom = await productConfigSchema.findOne({
       _id: ProductId,
     });
-    console.log(configRandom)
     let random;
     if (configRandom.number === "0") {
       random = generateRandomString(5);
@@ -138,19 +155,27 @@ const createProductCode = async (req, res) => {
     } else {
       random = generateRandomStringOdd(5);
     }
-    const getClientCode = await ProductSchema.find()
+    const getClientCode = await numberSchema.find()
       .sort({ createdAt: -1 })
       .limit(1);
-    console.log(getClientCode[0].productCode);
-    const formattedDate =
-      day + month + year + (getClientCode[0].productCode + 1);
+
+    let code;
+    if(getClientCode.length === 0  || (currentHour === targetHour && currentMinutes >= targetMinutes)){
+      const createCode = await numberSchema.create()
+      code = createCode.number
+    }else{
+      
+      code = getClientCode[0].number + 1
+    }
+    const formattedDate =   
+      day + month + year + currentDay+code;
     const clientCode = await ProductSchema.create({
       randomNumber: random,
       productCodePlus: formattedDate,
     });
     console.log(clientCode);
   } catch (error) {
-    return res.status(400).json(error);
+    console.log(error)
   }
 };
 const getProductCode = async (req, res) => {
@@ -190,7 +215,7 @@ const createClientCode = async (req, res) => {
       clientCodePlus: formattedDate,
     });
   } catch (error) {
-    return res.status(400).json(error);
+    console.log(error)
   }
 };
 

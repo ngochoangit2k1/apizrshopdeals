@@ -108,6 +108,7 @@ const updatePaymentAll = async (req, res) => {
     return res.status(400).json(error);
   }
 };
+
 const settingBank = async (req, res) => {};
 const settingWallet = async (req, res) => {};
 
