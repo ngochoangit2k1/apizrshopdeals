@@ -6,12 +6,12 @@ const authAdmin = require("../middlewares/authAdmin");
 
 const router = express.Router();
 
-router.post("/create", verifyToken, authAdmin,upload.Image('image'), paymentAdmin.createPaymentAdmin);
+router.post("/create", verifyToken,upload.Image('image'), paymentAdmin.createPaymentAdmin);
 
 router.patch(
   "/setting-pay-admin",
   verifyToken,
-  authAdmin,
+  // authAdmin,
   upload.Image("image"),
   paymentAdmin.update
 );

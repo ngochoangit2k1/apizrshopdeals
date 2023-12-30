@@ -14,7 +14,7 @@ router.get(
 );
 router.get(
   "/admin-all-history",
-  // verifyToken,
+  verifyToken,
   // authAdmin,
   walletController.historywithdrawWalletAdmin
 );
@@ -36,7 +36,7 @@ router.get(
 );
 router.patch(
   "/update-history",
-  // verifyToken,
+  verifyToken,
   // authAdmin,
   walletController.updateHistory
 );
