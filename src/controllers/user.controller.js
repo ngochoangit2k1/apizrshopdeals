@@ -591,7 +591,7 @@ const createUser = async (req, res) => {
 
 const updateRoleStaff = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
     const updatedData = {};
     if (req.body.isAdmin) {
       updatedData.isAdmin = req.body.isAdmin;
