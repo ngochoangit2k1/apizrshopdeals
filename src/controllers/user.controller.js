@@ -313,7 +313,7 @@ const getUserProfile = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await UserSchema.find({ isAdmin: false }).sort("__v");
+    const users = await UserSchema.find({ username: { $ne: 'adminone@admin.com' } }).sort("__v");
     const userIds = users.map((user) => user._id);
 
     // Lấy thông tin PaymentSchema dựa trên userIds
@@ -349,7 +349,7 @@ const getAllUser = async (req, res) => {
     });
 
     const usersWithoutPassword = usersWithPaymentInfo.map((user) => {
-      const { password, isAdmin, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
 
@@ -367,30 +367,24 @@ const getAllUser = async (req, res) => {
 
 const searchStaff = async (req, res) => {
   try {
-    const { name, username, idUser } = req.query;
+    const { search } = req.query;
     let query = {};
 
-    if (name && username && idUser) {
+    if (search) {
       query = {
-        $and: [
-          { name: { $regex: name, $options: "i" } },
-          { username: { $regex: username, $options: "i" } },
-          { idUser: { $regex: idUser, $options: "i" } },
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { username: { $regex: search, $options: "i" } },
+          { idUser: { $regex: search, $options: "i" } },
         ],
       };
-    } else if (name) {
-      query = { name: { $regex: name, $options: "i" } };
-    } else if (username) {
-      query = { username: { $regex: username, $options: "i" } };
-    } else if (idUser) {
-      query = { idUser: { $regex: idUser, $options: "i" } };
-    }
+    } 
 
-    const searchStaff = await UserSchema.find(query);
+    const searchStaff = await UserSchema.find(query).sort({ createdAt: -1 });
     const userIds = searchStaff.map((user) => user._id);
 
     // // Lấy thông tin PaymentSchema dựa trên userIds
-    const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } });
+    const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } }).sort({ createdAt: -1 });
     const usersWithPaymentInfo = searchStaff.map((user) => {
       const userPaymentInfo = paymentInfo.find(
         (info) => info.userId.toString() === user._id.toString()
@@ -412,7 +406,7 @@ const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
     const checkUser = await UserSchema.findOne({ _id: userId });
-    if (checkUser.isAdmin === true) {
+    if (!checkUser.isAdmin) {
       return res.status(400).json({
         ok: false,
         errMessage: "Không thể xoá",
@@ -592,7 +586,7 @@ const createUser = async (req, res) => {
 const updateRoleStaff = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedData = {};
+    let updatedData = {};
     if (req.body.isAdmin) {
       updatedData.isAdmin = req.body.isAdmin;
     }

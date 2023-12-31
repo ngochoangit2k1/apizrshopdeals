@@ -12,7 +12,7 @@ router.patch('/update', verifyToken, upload.Avatar('avatar'), userController.upd
 //Admin
 router.post('/register-staff',verifyToken, authAdmin,  userController.registerAdmin);
 router.get('/get-all-staff', verifyToken, userController.getAllUser);
-router.get('/search-staff',userController.searchStaff);
+router.get('/search-staff',verifyToken, userController.searchStaff);
 router.delete('/:userId', verifyToken, authAdmin, userController.deleteStaff);
 router.patch('/:userId', verifyToken, authAdmin, upload.Avatar('avatar'), userController.updateStaff);
 router.get('/referral-code',verifyToken, userController.referralCode)
