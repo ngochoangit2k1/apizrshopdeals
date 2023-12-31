@@ -367,30 +367,24 @@ const getAllUser = async (req, res) => {
 
 const searchStaff = async (req, res) => {
   try {
-    const { name, username, idUser } = req.query;
+    const { search } = req.query;
     let query = {};
 
-    if (name && username && idUser) {
+    if (search) {
       query = {
-        $and: [
+        $or: [
           { name: { $regex: name, $options: "i" } },
           { username: { $regex: username, $options: "i" } },
           { idUser: { $regex: idUser, $options: "i" } },
         ],
       };
-    } else if (name) {
-      query = { name: { $regex: name, $options: "i" } };
-    } else if (username) {
-      query = { username: { $regex: username, $options: "i" } };
-    } else if (idUser) {
-      query = { idUser: { $regex: idUser, $options: "i" } };
-    }
+    } 
 
-    const searchStaff = await UserSchema.find(query);
+    const searchStaff = await UserSchema.find(query).sort({ createdAt: -1 });
     const userIds = searchStaff.map((user) => user._id);
 
     // // Lấy thông tin PaymentSchema dựa trên userIds
-    const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } });
+    const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } }).sort({ createdAt: -1 });
     const usersWithPaymentInfo = searchStaff.map((user) => {
       const userPaymentInfo = paymentInfo.find(
         (info) => info.userId.toString() === user._id.toString()
