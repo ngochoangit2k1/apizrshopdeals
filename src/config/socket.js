@@ -1,27 +1,27 @@
 const { createClientCode } = require("../controllers/codeRandom.controller");
 const { createFashionCode } = require("../controllers/codeRandom.controller");
 const { createProductCode } = require("../controllers/codeRandom.controller");
-const countdownConfigSchema = require("../models/countdownConfig.model")
+const countdownConfigSchema = require("../models/countdownConfig.model");
 
-module.exports =  (io) => {
+module.exports = (io) => {
   let countdownInterval;
-  const id = '658aef294dd9f01b18a3adc7'
-  const startCountdown =async () => {
-    const countdownConfig = await countdownConfigSchema.findOne({_id:id})
+  const id = "658aef294dd9f01b18a3adc7";
+  const startCountdown = async () => {
+    const countdownConfig = await countdownConfigSchema.findOne({ _id: id });
 
     if (!countdownInterval) {
       let timeLeft = countdownConfig.countdown * 60; // 4 minutes in seconds
 
-      countdownInterval = setInterval(() => {
-        io.emit('updateTime', timeLeft);
+      countdownInterval = setInterval(async () => {
+        io.emit("updateTime", timeLeft);
 
         if (timeLeft === 0) {
           clearInterval(countdownInterval);
           countdownInterval = null;
-          io.emit('countdownFinished');
-          createProductCode();
-          createFashionCode()
-          startCountdown()
+          io.emit("countdownFinished");
+          await createProductCode();
+          await createFashionCode();
+          await startCountdown();
         } else {
           timeLeft--;
         }
@@ -29,7 +29,6 @@ module.exports =  (io) => {
     }
   };
   io.on("connection", (socket) => {
-
     socket.emit("hello", true);
 
     socket.on("sendMessUser", async () => {
