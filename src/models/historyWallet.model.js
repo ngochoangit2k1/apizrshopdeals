@@ -12,7 +12,7 @@ const HistoryWalletSchema = mongoose.Schema(
     bankName: { type: String },
 
     bankNumber: { type: String },
-    bankUserName: { type: String },
+    nameUserBank: { type: String },
     regulations: {
       type: String,
     },
