@@ -373,9 +373,9 @@ const searchStaff = async (req, res) => {
     if (search) {
       query = {
         $or: [
-          { name: { $regex: name, $options: "i" } },
-          { username: { $regex: username, $options: "i" } },
-          { idUser: { $regex: idUser, $options: "i" } },
+          { name: { $regex: search, $options: "i" } },
+          { username: { $regex: search, $options: "i" } },
+          { idUser: { $regex: search, $options: "i" } },
         ],
       };
     } 
