@@ -313,7 +313,9 @@ const getUserProfile = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await UserSchema.find({ username: { $ne: 'adminone@admin.com' } }).sort("__v");
+    const users = await UserSchema.find({
+      username: { $ne: "adminone@admin.com" },
+    }).sort("__v");
     const userIds = users.map((user) => user._id);
 
     // Lấy thông tin PaymentSchema dựa trên userIds
@@ -378,13 +380,22 @@ const searchStaff = async (req, res) => {
           { idUser: { $regex: search, $options: "i" } },
         ],
       };
-    } 
+    } else {
+      query = {
+        $or: [
+          { isAdmin: true },
+          { isStaff: true }
+        ]
+      };
+    }
 
     const searchStaff = await UserSchema.find(query).sort({ createdAt: -1 });
     const userIds = searchStaff.map((user) => user._id);
 
     // // Lấy thông tin PaymentSchema dựa trên userIds
-    const paymentInfo = await PaymentSchema.find({ userId: { $in: userIds } }).sort({ createdAt: -1 });
+    const paymentInfo = await PaymentSchema.find({
+      userId: { $in: userIds },
+    }).sort({ createdAt: -1 });
     const usersWithPaymentInfo = searchStaff.map((user) => {
       const userPaymentInfo = paymentInfo.find(
         (info) => info.userId.toString() === user._id.toString()
@@ -612,9 +623,9 @@ const updateRoleStaff = async (req, res) => {
       }
     );
 
-    return res.status(200).json({ status: 'ok', message: staffUpdate });
+    return res.status(200).json({ status: true, message: staffUpdate });
   } catch (error) {
-    return res.status(500).json({ status: error})
+    return res.status(500).json({ status: error });
   }
 };
 
