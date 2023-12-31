@@ -406,7 +406,7 @@ const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
     const checkUser = await UserSchema.findOne({ _id: userId });
-    if (checkUser.isAdmin === true) {
+    if (!checkUser.isAdmin) {
       return res.status(400).json({
         ok: false,
         errMessage: "Không thể xoá",
