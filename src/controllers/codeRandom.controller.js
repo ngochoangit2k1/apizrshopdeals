@@ -69,19 +69,24 @@ const years = currentTime.getFullYear().toString();
 const year = years.slice(2);
 const currentHour = currentTime.getHours();
 const currentMinutes = currentTime.getMinutes();
-const targetHour = 1;
-const targetMinutes = 29;
+const targetHour = 12;
+const targetMinutes = 35;
 const daysOfWeek = ["8", "2", "3", "4", "5", "6", "7"];
 const currentDayIndex = currentTime.getDay();
-let currentDay;
-currentDay = daysOfWeek[currentDayIndex];
+
+const currentDay = daysOfWeek[currentDayIndex];
 //Fashion
-if (
-  (currentHour === 1 && currentMinutes <= targetMinutes) ||
-  currentHour === 0
-) {
-  currentDay = daysOfWeek[currentDayIndex - 1];
-}
+
+const resetCount = async () => {
+  try {
+    console.log("sssss");
+    await numberSchema.deleteMany({});
+
+    await numberSchema.create({ number: 1 });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const createFashionCode = async (req, res) => {
   try {
@@ -104,12 +109,15 @@ const createFashionCode = async (req, res) => {
     console.log("getClientCode", getClientCode);
 
     let code;
-    if (
-      getClientCode.length === 0 ||
-      (currentHour === targetHour && currentMinutes >= targetMinutes)
-    ) {
-      const createCode = await numberSchema.create({ number: 1 });
-      code = createCode.number;
+    console.log(currentHour);
+    console.log(
+      "chek",
+      currentHour === targetHour && currentMinutes === targetMinutes
+    );
+    console.log(currentMinutes);
+    if (currentHour === targetHour && currentMinutes === targetMinutes) {
+      console.log("checksss");
+      resetCount();
     } else {
       const number = getClientCode[0].number + 1;
       await numberSchema.create({ number: number });
@@ -169,12 +177,10 @@ const createProductCode = async (req, res) => {
       .limit(1);
 
     let code;
-    if (
-      getClientCode.length === 0 ||
-      (currentHour === targetHour && currentMinutes >= targetMinutes)
-    ) {
-      const createCode = await numberSchema.create();
-      code = createCode.number;
+    if (getClientCode.length === 0) {
+      await numberSchema.create({number: 1});
+      code = 1;
+
     } else {
       code = getClientCode[0].number + 1;
     }
