@@ -73,15 +73,9 @@ const targetHour = 1;
 const targetMinutes = 29;
 const daysOfWeek = ["8", "2", "3", "4", "5", "6", "7"];
 const currentDayIndex = currentTime.getDay();
-let currentDay;
-currentDay = daysOfWeek[currentDayIndex];
+
+ const currentDay = daysOfWeek[currentDayIndex];
 //Fashion
-if (
-  (currentHour === 1 && currentMinutes <= targetMinutes) ||
-  currentHour === 0
-) {
-  currentDay = daysOfWeek[currentDayIndex - 1];
-}
 
 const createFashionCode = async (req, res) => {
   try {

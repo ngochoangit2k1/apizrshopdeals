@@ -16,7 +16,11 @@ router.get('/search-staff',userController.searchStaff);
 router.delete('/:userId', verifyToken, authAdmin, userController.deleteStaff);
 router.patch('/:userId', verifyToken, authAdmin, upload.Avatar('avatar'), userController.updateStaff);
 router.get('/referral-code',verifyToken, userController.referralCode)
+<<<<<<< HEAD
 router.patch('/update-role', verifyToken, authAdmin, userController.updateRoleStaff)
+=======
+router.patch('/update-role/:id', verifyToken, authAdmin, userController.updateRoleStaff)
+>>>>>>> 4f74a2af10058f6174e5069ca41cbc314360b784
 
 // router.post('/get-user-by-email', userController.getUserWithMail);
 // router.patch('/:userId', upload.Avatar('avatar'), userController.updateUser);
