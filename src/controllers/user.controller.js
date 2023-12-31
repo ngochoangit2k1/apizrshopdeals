@@ -602,7 +602,7 @@ const updateRoleStaff = async (req, res) => {
       const passwordHash = bcrypt.hashSync(pwd, salt);
       updatedData.password = passwordHash;
     }
-    const staffUpdate = await UserSchema.findOneAndUpdate(
+    await UserSchema.findOneAndUpdate(
       {
         _id: id,
       },
@@ -612,7 +612,7 @@ const updateRoleStaff = async (req, res) => {
       }
     );
 
-    return res.status(200).json({ status: 'ok', message: staffUpdate });
+    return res.status(200).json({ status: 'Cập nhật thành công' });
   } catch (error) {
     return res.status(500).json({ status: error})
   }
