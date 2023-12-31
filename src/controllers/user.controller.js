@@ -313,7 +313,7 @@ const getUserProfile = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await UserSchema.find({ isAdmin: false }).sort("__v");
+    const users = await UserSchema.find({ username: { $ne: 'adminone@admin.com' } }).sort("__v");
     const userIds = users.map((user) => user._id);
 
     // Lấy thông tin PaymentSchema dựa trên userIds
@@ -349,7 +349,7 @@ const getAllUser = async (req, res) => {
     });
 
     const usersWithoutPassword = usersWithPaymentInfo.map((user) => {
-      const { password, isAdmin, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
 

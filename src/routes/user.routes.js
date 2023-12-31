@@ -11,7 +11,7 @@ router.patch('/update', verifyToken, upload.Avatar('avatar'), userController.upd
 // router.post('/register-staff', userController.register);
 //Admin
 router.post('/register-staff',verifyToken, authAdmin,  userController.registerAdmin);
-router.get('/get-all-staff', verifyToken, userController.getAllUser);
+router.get('/get-all-staff', userController.getAllUser);
 router.get('/search-staff',userController.searchStaff);
 router.delete('/:userId', verifyToken, authAdmin, userController.deleteStaff);
 router.patch('/:userId', verifyToken, authAdmin, upload.Avatar('avatar'), userController.updateStaff);
