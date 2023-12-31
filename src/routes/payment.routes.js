@@ -12,6 +12,6 @@ router.post("/create",  paymentController.postPayment);
 router.patch("/update", verifyToken, paymentController.updatePayment);
 router.patch("/update/:userId", verifyToken, paymentController.updatePaymentAll);
 router.get("/search", verifyToken, paymentController.getPayment);
-router.delete("/delete/:paymentId", verifyToken, authAdmin,  paymentController.deletePayment);
+router.post("/delete/:paymentId", verifyToken, authAdmin,  paymentController.deletePayment);
 
 module.exports = router;

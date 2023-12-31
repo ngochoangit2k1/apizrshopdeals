@@ -19,5 +19,5 @@ router.patch(
 router.get("/", verifyToken, paymentAdmin.get);
 router.get("/user", verifyToken,paymentAdmin.getUser);
 
-router.delete("/delete", verifyToken,authAdmin, paymentAdmin.deletePayment)
+router.post("/delete", verifyToken,authAdmin, paymentAdmin.deletePayment)
 module.exports = router;

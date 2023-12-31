@@ -8,6 +8,6 @@ router.get("/get-all-comment", commentController.getAllComent);
 router.post("/replies", commentController.repComments);
 router.post("/rep-comment", verifyToken, commentController.repComment);
 router.get("/search", verifyToken, commentController.searchComent);
-router.delete("/delete", verifyToken, commentController.deleteComent);
+router.post("/delete", verifyToken, commentController.deleteComent);
 
 module.exports = router;

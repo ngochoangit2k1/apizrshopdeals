@@ -623,11 +623,7 @@ const updateRoleStaff = async (req, res) => {
       }
     );
 
-<<<<<<< HEAD
-    return res.status(200).json({ status: true, message: staffUpdate });
-=======
     return res.status(200).json({ status: 'Cập nhật thành công' });
->>>>>>> 1eb49b3cba94c278a4d999c76f19a99b2db0e9c3
   } catch (error) {
     return res.status(500).json({ status: error });
   }
