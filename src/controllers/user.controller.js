@@ -416,13 +416,13 @@ const searchStaff = async (req, res) => {
 const deleteStaff = async (req, res) => {
   try {
     const { userId } = req.params;
-    const checkUser = await UserSchema.findOne({ _id: userId });
-    if (!checkUser.isAdmin) {
-      return res.status(400).json({
-        ok: false,
-        errMessage: "Không thể xoá",
-      });
-    }
+    // const checkUser = await UserSchema.findOne({ _id: userId });
+    // if (!checkUser.isAdmin) {
+    //   return res.status(400).json({
+    //     ok: false,
+    //     errMessage: "Không thể xoá",
+    //   });
+    // }
     const user = await UserSchema.findOneAndDelete({_id: userId});
 
     if (!user) {
