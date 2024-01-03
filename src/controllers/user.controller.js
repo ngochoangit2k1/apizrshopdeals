@@ -423,7 +423,7 @@ const deleteStaff = async (req, res) => {
         errMessage: "Không thể xoá",
       });
     }
-    const user = await UserSchema.findByIdAndDelete(userId);
+    const user = await UserSchema.findOneAndDelete({_id: userId});
 
     if (!user) {
       return res.status(404).json({
